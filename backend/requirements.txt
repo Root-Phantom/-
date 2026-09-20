@@ -1,0 +1,25 @@
+# ---- Web framework ----
+fastapi==0.115.6
+uvicorn==0.34.0
+httptools==0.6.4
+colorama==0.4.6
+python-multipart==0.0.20
+
+# ---- Database ----
+SQLAlchemy==2.0.36
+GeoAlchemy2==0.17.0
+psycopg[binary]==3.2.3
+
+# ---- Auth / security ----
+bcrypt==4.2.1
+PyJWT==2.10.1
+
+# ---- Config / validation ----
+pydantic==2.10.4
+pydantic-settings==2.7.0
+
+# ---- Geo / shapefile ----
+pyshp==2.3.1
+shapely==2.0.6
+pyproj==3.7.0
+numpy==2.5.3

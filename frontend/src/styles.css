@@ -1,0 +1,407 @@
+/* ============ سامانه مدیریت معابر پلدختر — شیوه‌نامه ظاهری ============ */
+
+:root {
+  --bg: #f1f5f9;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text: #0f172a;
+  --text-dim: #64748b;
+  --text-faint: #94a3b8;
+
+  --primary: #1d4ed8;
+  --primary-hover: #1e3fa8;
+  --primary-soft: #eff5ff;
+  --success: #15803d;
+  --success-soft: #f0fdf4;
+  --warn: #b45309;
+  --warn-soft: #fffbeb;
+  --danger: #b91c1c;
+  --danger-soft: #fef2f2;
+
+  --radius: 8px;
+  --radius-sm: 6px;
+  --shadow: 0 1px 3px rgba(15, 23, 42, .08), 0 1px 2px rgba(15, 23, 42, .04);
+  --shadow-lg: 0 10px 32px rgba(15, 23, 42, .16);
+
+  --header-h: 56px;
+  --sidebar-w: 300px;
+  --font: "Vazirmatn", "Segoe UI", Tahoma, system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; margin: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13.5px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* اعداد فارسی در جدول‌ها و ورودی‌ها لاتین بمانند تا خوانا باشند */
+input, select, textarea, button { font-family: inherit; font-size: inherit; color: inherit; }
+
+h1, h2, h3, h4 { margin: 0; font-weight: 700; line-height: 1.4; }
+
+a { color: var(--primary); }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--surface-2); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+/* ---------------- چیدمان کلی ---------------- */
+
+.app { display: flex; flex-direction: column; height: 100%; }
+
+.header {
+  height: var(--header-h);
+  flex: 0 0 auto;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 16px;
+  box-shadow: var(--shadow);
+  z-index: 1200;
+}
+
+.header .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.header .brand-mark {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--primary), #3b82f6);
+  color: #fff; display: grid; place-items: center; font-size: 16px; flex: 0 0 auto;
+}
+.header .brand-text { min-width: 0; }
+.header .brand-text h1 { font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.header .brand-text span { font-size: 11px; color: var(--text-dim); }
+
+.header nav { display: flex; gap: 2px; margin-inline-start: 10px; flex-wrap: wrap; }
+.header nav button {
+  background: none; border: 0; padding: 7px 12px; border-radius: var(--radius-sm);
+  cursor: pointer; color: var(--text-dim); font-weight: 500; white-space: nowrap;
+}
+.header nav button:hover { background: var(--surface-2); color: var(--text); }
+.header nav button.active { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
+
+.header .spacer { flex: 1; }
+.header .userbox { display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
+.header .userbox .who { text-align: left; line-height: 1.35; }
+.header .userbox .who strong { display: block; font-size: 12.5px; }
+.header .userbox .who small { color: var(--text-dim); font-size: 11px; }
+
+.main { flex: 1; display: flex; min-height: 0; overflow: hidden; }
+
+.sidebar {
+  width: var(--sidebar-w); flex: 0 0 var(--sidebar-w);
+  background: var(--surface); border-inline-end: 1px solid var(--border);
+  overflow-y: auto; padding: 12px;
+}
+.workspace { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+
+/* ---------------- اجزای پایه ---------------- */
+
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px; margin-bottom: 12px;
+}
+.card > h3 {
+  font-size: 12.5px; color: var(--text-dim); text-transform: none;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+  letter-spacing: 0;
+}
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 7px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong);
+  background: var(--surface); cursor: pointer; font-weight: 500; white-space: nowrap;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.btn:hover:not(:disabled) { background: var(--surface-2); border-color: var(--text-faint); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: var(--primary-hover); border-color: var(--primary-hover); }
+.btn-danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+.btn-danger:hover:not(:disabled) { background: #991b1b; border-color: #991b1b; }
+.btn-ghost { border-color: transparent; background: transparent; color: var(--text-dim); }
+.btn-ghost:hover:not(:disabled) { background: var(--surface-2); color: var(--text); }
+.btn-sm { padding: 4px 9px; font-size: 12px; }
+.btn-block { width: 100%; }
+
+.field { margin-bottom: 11px; }
+.field > label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 4px; font-weight: 500; }
+.field > label .req { color: var(--danger); margin-inline-start: 2px; }
+
+.input, .select, .textarea {
+  width: 100%; padding: 7px 10px; border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm); background: var(--surface); outline: none;
+  transition: border-color .12s, box-shadow .12s;
+}
+.input:focus, .select:focus, .textarea:focus {
+  border-color: var(--primary); box-shadow: 0 0 0 3px rgba(29, 78, 216, .12);
+}
+.input:disabled, .select:disabled { background: var(--surface-2); color: var(--text-dim); }
+.textarea { resize: vertical; min-height: 64px; line-height: 1.7; }
+.input.ltr { direction: ltr; text-align: left; }
+
+.row { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
+.row > * { min-width: 0; }
+.grow { flex: 1; }
+
+.checkbox { display: flex; align-items: center; gap: 7px; cursor: pointer; font-size: 12.5px; }
+.checkbox input { width: 15px; height: 15px; accent-color: var(--primary); cursor: pointer; margin: 0; }
+
+.badge {
+  display: inline-block; padding: 2px 8px; border-radius: 999px;
+  font-size: 11px; font-weight: 600; white-space: nowrap;
+}
+.badge-primary { background: var(--primary-soft); color: var(--primary); }
+.badge-success { background: var(--success-soft); color: var(--success); }
+.badge-warn { background: var(--warn-soft); color: var(--warn); }
+.badge-danger { background: var(--danger-soft); color: var(--danger); }
+.badge-muted { background: var(--surface-2); color: var(--text-dim); }
+
+.alert {
+  padding: 10px 12px; border-radius: var(--radius-sm); margin-bottom: 12px;
+  font-size: 12.5px; border: 1px solid transparent; display: flex; gap: 8px; align-items: flex-start;
+}
+.alert-error { background: var(--danger-soft); color: var(--danger); border-color: #fecaca; }
+.alert-success { background: var(--success-soft); color: var(--success); border-color: #bbf7d0; }
+.alert-info { background: var(--primary-soft); color: var(--primary); border-color: #c7dbfe; }
+.alert-warn { background: var(--warn-soft); color: var(--warn); border-color: #fde68a; }
+
+.empty { text-align: center; padding: 36px 16px; color: var(--text-faint); }
+.empty .icon { font-size: 30px; display: block; margin-bottom: 8px; opacity: .6; }
+
+.muted { color: var(--text-dim); }
+.tiny { font-size: 11.5px; }
+.nowrap { white-space: nowrap; }
+.mono { font-family: "Cascadia Mono", Consolas, monospace; direction: ltr; font-size: 11.5px; }
+
+/* ---------------- جدول ---------------- */
+
+.table-wrap { overflow: auto; flex: 1; min-height: 0; background: var(--surface); }
+
+table.grid { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12.5px; }
+table.grid th, table.grid td {
+  padding: 7px 10px; text-align: right; border-bottom: 1px solid var(--border);
+  white-space: nowrap; max-width: 280px; overflow: hidden; text-overflow: ellipsis;
+}
+table.grid thead th {
+  position: sticky; top: 0; background: var(--surface-2); z-index: 2;
+  font-weight: 600; color: var(--text-dim); border-bottom: 1px solid var(--border-strong);
+  user-select: none;
+}
+table.grid thead th.sortable { cursor: pointer; }
+table.grid thead th.sortable:hover { background: #eef2f7; color: var(--text); }
+table.grid tbody tr:hover { background: var(--surface-2); }
+table.grid tbody tr.selected { background: var(--primary-soft); }
+table.grid tbody tr.archived td { color: var(--text-faint); font-style: italic; }
+table.grid td.actions { white-space: nowrap; }
+table.grid .cell-empty { color: var(--text-faint); }
+
+.table-toolbar {
+  flex: 0 0 auto; display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+  background: var(--surface); border-bottom: 1px solid var(--border); flex-wrap: wrap;
+}
+.table-footer {
+  flex: 0 0 auto; display: flex; align-items: center; gap: 10px; padding: 7px 12px;
+  background: var(--surface); border-top: 1px solid var(--border); font-size: 12px;
+  color: var(--text-dim); flex-wrap: wrap;
+}
+
+.pager { display: flex; align-items: center; gap: 4px; }
+
+/* ---------------- نقشه ---------------- */
+
+.map-area { flex: 1; position: relative; min-height: 0; }
+#map { position: absolute; inset: 0; background: #e5e7eb; }
+
+.map-overlay {
+  position: absolute; z-index: 600; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg);
+}
+.map-legend { inset-inline-start: 12px; bottom: 22px; padding: 9px 12px; font-size: 12px; max-width: 240px; }
+.map-legend .item { display: flex; align-items: center; gap: 7px; margin-top: 5px; }
+.map-legend .swatch { width: 18px; height: 4px; border-radius: 2px; flex: 0 0 auto; }
+.map-legend .swatch.point { width: 11px; height: 11px; border-radius: 50%; }
+
+.map-hint {
+  inset-inline-end: 12px; top: 12px; padding: 8px 12px; font-size: 12px;
+  max-width: 290px; background: #fffbeb; border-color: #fde68a; color: #92400e;
+}
+
+.drawbar { inset-inline-end: 12px; top: 12px; padding: 6px; display: flex; flex-direction: column; gap: 4px; }
+.drawbar button {
+  width: 34px; height: 34px; border: 1px solid var(--border); background: var(--surface);
+  border-radius: var(--radius-sm); cursor: pointer; font-size: 15px; display: grid; place-items: center;
+}
+.drawbar button:hover { background: var(--surface-2); }
+.drawbar button.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+.drawbar .sep { height: 1px; background: var(--border); margin: 2px 0; }
+
+/* پاپ‌آپ لیفلت با فونت فارسی */
+.leaflet-container { font-family: var(--font) !important; font-size: 12.5px; }
+.leaflet-popup-content { margin: 10px 12px; direction: rtl; text-align: right; min-width: 190px; }
+.leaflet-popup-content-wrapper { border-radius: var(--radius); }
+.popup-title { font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+.popup-table { width: 100%; font-size: 12px; }
+.popup-table td { padding: 2px 0; vertical-align: top; }
+.popup-table td:first-child { color: var(--text-dim); padding-inline-end: 8px; white-space: nowrap; }
+.popup-actions { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+.leaflet-draw-toolbar, .leaflet-draw-actions { direction: ltr; }
+
+/* ---------------- پنل پایین (جدول توصیفی) ---------------- */
+
+.split { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.split .pane-map { flex: 1; min-height: 120px; position: relative; display: flex; }
+.split .pane-table {
+  flex: 0 0 auto; display: flex; flex-direction: column;
+  border-top: 2px solid var(--border-strong); background: var(--surface); min-height: 0;
+}
+.resizer { height: 5px; cursor: ns-resize; background: var(--border); flex: 0 0 auto; }
+.resizer:hover { background: var(--primary); }
+
+/* ---------------- پنجره (مودال) ---------------- */
+
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(15, 23, 42, .5);
+  display: grid; place-items: center; z-index: 3000; padding: 20px;
+  backdrop-filter: blur(2px);
+}
+.modal {
+  background: var(--surface); border-radius: 12px; box-shadow: var(--shadow-lg);
+  width: 100%; max-width: 520px; max-height: 90vh; display: flex; flex-direction: column;
+}
+.modal.wide { max-width: 880px; }
+.modal.xwide { max-width: 1100px; }
+.modal-head {
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; flex: 0 0 auto;
+}
+.modal-head h2 { font-size: 15px; }
+.modal-head .sub { font-size: 11.5px; color: var(--text-dim); font-weight: 400; }
+.modal-body { padding: 16px 18px; overflow-y: auto; flex: 1; min-height: 0; }
+.modal-foot {
+  padding: 12px 18px; border-top: 1px solid var(--border);
+  display: flex; gap: 8px; justify-content: flex-start; flex: 0 0 auto; background: var(--surface-2);
+  border-radius: 0 0 12px 12px; flex-wrap: wrap;
+}
+.x-btn {
+  border: 0; background: none; font-size: 20px; cursor: pointer; color: var(--text-faint);
+  line-height: 1; padding: 2px 6px; border-radius: 4px;
+}
+.x-btn:hover { background: var(--surface-2); color: var(--text); }
+
+/* ---------------- ساخت پرس‌وجو ---------------- */
+
+.cond-row {
+  display: grid; grid-template-columns: 1fr 1fr 1.3fr auto; gap: 6px;
+  align-items: center; margin-bottom: 6px;
+}
+.cond-row.with-second { grid-template-columns: 1fr 1fr .65fr .65fr auto; }
+.logic-toggle { display: inline-flex; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); overflow: hidden; }
+.logic-toggle button { border: 0; background: var(--surface); padding: 5px 14px; cursor: pointer; font-size: 12px; }
+.logic-toggle button.active { background: var(--primary); color: #fff; font-weight: 600; }
+
+/* ---------------- گام‌های آپلود ---------------- */
+
+.steps { display: flex; gap: 0; margin-bottom: 18px; }
+.steps .step { flex: 1; text-align: center; position: relative; padding-top: 26px; font-size: 12px; color: var(--text-faint); }
+.steps .step::before {
+  content: attr(data-n); position: absolute; top: 0; inset-inline-start: 50%; transform: translateX(50%);
+  width: 22px; height: 22px; border-radius: 50%; background: var(--surface-2);
+  border: 2px solid var(--border-strong); display: grid; place-items: center; font-size: 11px; font-weight: 700;
+}
+.steps .step::after {
+  content: ""; position: absolute; top: 11px; inset-inline-start: 0; width: 50%; height: 2px; background: var(--border);
+}
+.steps .step:first-child::after { display: none; }
+.steps .step.done, .steps .step.active { color: var(--primary); font-weight: 600; }
+.steps .step.done::before, .steps .step.active::before {
+  background: var(--primary); border-color: var(--primary); color: #fff;
+}
+
+/* ---------------- گزارش / داشبورد ---------------- */
+
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.stat {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px;
+}
+.stat .v { font-size: 22px; font-weight: 700; line-height: 1.25; }
+.stat .k { font-size: 11.5px; color: var(--text-dim); }
+
+.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: 12px; }
+.bar-row .name { flex: 0 0 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar-row .track { flex: 1; height: 7px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
+.bar-row .fill { height: 100%; background: var(--primary); border-radius: 4px; }
+.bar-row .n { flex: 0 0 42px; text-align: left; color: var(--text-dim); }
+
+/* ---------------- صفحه ورود ---------------- */
+
+.login-page {
+  height: 100%; display: grid; place-items: center;
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #2563eb 100%); padding: 20px;
+}
+.login-card { background: var(--surface); border-radius: 14px; box-shadow: var(--shadow-lg); width: 100%; max-width: 380px; padding: 28px; }
+.login-card .logo { text-align: center; margin-bottom: 20px; }
+.login-card .logo .mark {
+  width: 54px; height: 54px; border-radius: 14px; margin: 0 auto 10px;
+  background: linear-gradient(135deg, var(--primary), #3b82f6); color: #fff;
+  display: grid; place-items: center; font-size: 24px;
+}
+.login-card .logo h2 { font-size: 16px; }
+.login-card .logo p { font-size: 12px; color: var(--text-dim); margin: 4px 0 0; }
+
+/* ---------------- تاریخچه ---------------- */
+
+.timeline { position: relative; padding-inline-start: 18px; }
+.timeline::before { content: ""; position: absolute; inset-inline-start: 4px; top: 4px; bottom: 4px; width: 2px; background: var(--border); }
+.tl-item { position: relative; padding-bottom: 14px; }
+.tl-item::before {
+  content: ""; position: absolute; inset-inline-start: -18px; top: 5px;
+  width: 9px; height: 9px; border-radius: 50%; background: var(--primary); border: 2px solid var(--surface);
+  box-shadow: 0 0 0 2px var(--border);
+}
+.tl-item .tl-head { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; font-size: 12.5px; }
+.tl-item .tl-body { font-size: 12px; color: var(--text-dim); margin-top: 3px; }
+.diff { display: inline-flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+.diff .old { color: var(--danger); text-decoration: line-through; }
+.diff .new { color: var(--success); font-weight: 600; }
+
+.spinner {
+  width: 15px; height: 15px; border: 2px solid var(--border-strong);
+  border-top-color: var(--primary); border-radius: 50%; animation: spin .7s linear infinite;
+  display: inline-block; vertical-align: -2px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-box { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 28px; color: var(--text-dim); }
+
+.toast-stack { position: fixed; bottom: 16px; inset-inline-start: 16px; z-index: 4000; display: flex; flex-direction: column; gap: 7px; }
+.toast {
+  background: var(--text); color: #fff; padding: 9px 14px; border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg); font-size: 12.5px; max-width: 380px;
+  animation: slideup .18s ease-out;
+}
+.toast.ok { background: var(--success); }
+.toast.err { background: var(--danger); }
+@keyframes slideup { from { transform: translateY(8px); opacity: 0; } }
+
+/* ---------------- واکنش‌گرا ---------------- */
+
+@media (max-width: 900px) {
+  .sidebar { position: absolute; inset-block: 0; inset-inline-start: 0; z-index: 1100; box-shadow: var(--shadow-lg); transform: translateX(100%); transition: transform .2s; }
+  .sidebar.open { transform: translateX(0); }
+  .main { position: relative; }
+  .header .brand-text span { display: none; }
+  .cond-row, .cond-row.with-second { grid-template-columns: 1fr; }
+}
+.menu-toggle { display: none; }
+@media (max-width: 900px) { .menu-toggle { display: grid; } }
