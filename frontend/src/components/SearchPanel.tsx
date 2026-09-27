@@ -38,6 +38,8 @@ export default function SearchPanel(p: SearchPanelProps) {
 
   // مقادیر یکتای هر ستون برای کمک به کاربر
   const [distinct, setDistinct] = useState<Record<string, { value: string; count: number }[]>>({});
+  // مقادیر یکتا مخصوص هر لایه است؛ با تعویض لایه دوباره خوانده می‌شود
+  useEffect(() => setDistinct({}), [layerId]);
 
   const typeOf = (key: string) => fields.find((f) => f.key === key)?.data_type || "text";
 

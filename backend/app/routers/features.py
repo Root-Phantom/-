@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import math
 import uuid
 from datetime import date, datetime, timezone
 from typing import Any, Optional
@@ -103,7 +104,8 @@ def validate_attributes(
     for key, raw in attrs.items():
         fd = by_key[key]
         if raw is None or (isinstance(raw, str) and raw.strip() == ""):
-            if fd.is_required and not partial:
+            # ستون اجباری نه در ایجاد و نه در ویرایش نباید خالی شود
+            if fd.is_required:
                 raise HTTPException(400, f"ستون «{fd.label}» اجباری است.")
             clean[key] = None
             continue
@@ -123,17 +125,18 @@ def validate_attributes(
 def _coerce(fd: FieldDef, raw: Any) -> Any:
     """تبدیل مقدار ورودی به نوع ستون."""
     t = fd.data_type
-    if t == FieldType.INTEGER:
-        try:
-            return int(float(str(raw).strip()))
-        except (TypeError, ValueError):
-            raise HTTPException(400, f"مقدار ستون «{fd.label}» باید عدد صحیح باشد.")
-    if t == FieldType.NUMBER:
+    if t in (FieldType.INTEGER, FieldType.NUMBER):
         try:
             v = float(str(raw).strip())
-            return int(v) if v.is_integer() else v
         except (TypeError, ValueError):
-            raise HTTPException(400, f"مقدار ستون «{fd.label}» باید عدد باشد.")
+            v = math.nan
+        # NaN و بی‌نهایت در JSON پستگرس ذخیره‌شدنی نیستند
+        if not math.isfinite(v):
+            kind = "عدد صحیح" if t == FieldType.INTEGER else "عدد"
+            raise HTTPException(400, f"مقدار ستون «{fd.label}» باید {kind} باشد.")
+        if t == FieldType.INTEGER:
+            return int(v)
+        return int(v) if v.is_integer() else v
     if t == FieldType.BOOLEAN:
         if isinstance(raw, bool):
             return raw

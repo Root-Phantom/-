@@ -109,8 +109,9 @@ if FRONTEND_DIR.exists():
         """همه مسیرهای غیر API به index.html هدایت می‌شوند (مسیریابی سمت کلاینت)."""
         if full_path.startswith("api/"):
             return JSONResponse(status_code=404, content={"detail": "مسیر یافت نشد."})
-        candidate = FRONTEND_DIR / full_path
-        if full_path and candidate.is_file():
+        candidate = (FRONTEND_DIR / full_path).resolve()
+        # جلوگیری از خروج از پوشه dist با «../» (مثلاً برای خواندن backend/.env)
+        if full_path and candidate.is_relative_to(FRONTEND_DIR.resolve()) and candidate.is_file():
             return FileResponse(candidate)
         return FileResponse(FRONTEND_DIR / "index.html")
 else:

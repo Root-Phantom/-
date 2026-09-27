@@ -119,6 +119,7 @@ def export_logs(
     q: Optional[str] = None,
     action: Optional[str] = None,
     user_id: Optional[uuid.UUID] = None,
+    status: Optional[str] = None,
     date_from: Optional[datetime] = None,
     date_to: Optional[datetime] = None,
     limit: int = Query(50000, ge=1, le=200000),
@@ -127,7 +128,7 @@ def export_logs(
 ):
     query = _filtered(
         db, q=q, action=action, entity_type=None, entity_id=None,
-        user_id=user_id, date_from=date_from, date_to=date_to, status=None,
+        user_id=user_id, date_from=date_from, date_to=date_to, status=status,
     )
     rows = query.order_by(AuditLog.created_at.desc()).limit(limit).all()
 

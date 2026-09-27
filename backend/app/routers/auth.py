@@ -20,8 +20,10 @@ from ..security import (
 
 router = APIRouter(prefix="/api/auth", tags=["احراز هویت"])
 
-# حداکثر تلاش ناموفق ورود از یک IP در بازه زمانی مشخص
+# حداکثر تلاش ناموفق ورود در بازه زمانی مشخص: برای یک نام کاربری از یک IP،
+# و سقف بالاتر برای کل IP (کارکنان یک اداره معمولاً پشت یک IP مشترک هستند)
 MAX_FAILED_LOGINS = 10
+MAX_FAILED_LOGINS_PER_IP = 50
 FAILED_LOGIN_WINDOW = timedelta(minutes=15)
 
 
@@ -41,16 +43,15 @@ def _set_cookie(response: Response, token: str) -> None:
 def login(data: LoginIn, request: Request, response: Response, db: Session = Depends(get_db)):
     ip = _client_ip(request)
     if ip:
-        recent_failures = (
-            db.query(AuditLog)
-            .filter(
-                AuditLog.action == "login_failed",
-                AuditLog.ip_address == ip,
-                AuditLog.created_at > datetime.now(timezone.utc) - FAILED_LOGIN_WINDOW,
-            )
-            .count()
+        failures = db.query(AuditLog).filter(
+            AuditLog.action == "login_failed",
+            AuditLog.ip_address == ip,
+            AuditLog.created_at > datetime.now(timezone.utc) - FAILED_LOGIN_WINDOW,
         )
-        if recent_failures >= MAX_FAILED_LOGINS:
+        if (
+            failures.filter(AuditLog.entity_id == data.username).count() >= MAX_FAILED_LOGINS
+            or failures.count() >= MAX_FAILED_LOGINS_PER_IP
+        ):
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail="تعداد تلاش‌های ناموفق زیاد است. ۱۵ دقیقه بعد دوباره تلاش کنید.",

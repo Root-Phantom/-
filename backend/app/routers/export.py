@@ -65,7 +65,7 @@ def export_csv(
             + [
                 "آرشیو" if f.is_archived else "فعال",
                 f.updated_at.strftime("%Y-%m-%d %H:%M") if f.updated_at else "",
-                (f.updated_by.full_name or f.updated_by.username) if f.updated_by else "",
+                (f.updated_by.full_name or f.updated_by.username) if f.updated_by and not public else "",
             ]
         )
 

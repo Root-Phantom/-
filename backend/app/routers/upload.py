@@ -72,7 +72,7 @@ def _cleanup_stale_uploads() -> None:
 
 
 @router.post("/shapefile/preview", response_model=ShapefilePreview, summary="آپلود و پیش‌نمایش شیپ‌فایل")
-async def preview_shapefile(
+def preview_shapefile(
     request: Request,
     file: UploadFile = File(..., description="فایل ZIP شامل shp/shx/dbf/prj"),
     db: Session = Depends(get_db),
@@ -95,9 +95,11 @@ async def preview_shapefile(
     # نوشتن فایل روی دیسک به صورت تکه‌ای با کنترل حجم
     max_bytes = settings.MAX_UPLOAD_MB * 1024 * 1024
     size = 0
+    # تابع همگام است تا FastAPI آن را در thread جدا اجرا کند و خواندن/باز کردن
+    # فایل‌های بزرگ، درخواست‌های کاربران دیگر را معطل نکند
     try:
         with dest.open("wb") as out:
-            while chunk := await file.read(1024 * 1024):
+            while chunk := file.file.read(1024 * 1024):
                 size += len(chunk)
                 if size > max_bytes:
                     raise HTTPException(
@@ -108,7 +110,7 @@ async def preview_shapefile(
         shutil.rmtree(wd, ignore_errors=True)
         raise
     finally:
-        await file.close()
+        file.file.close()
 
     try:
         folder = extract_archive(dest, wd / "extracted")
@@ -162,7 +164,7 @@ async def preview_shapefile(
         fields=field_info,
         sample=sample,
     )
-    
+
 
 @router.post("/shapefile/import", summary="درون‌ریزی شیپ‌فایل در لایه")
 def import_shapefile(

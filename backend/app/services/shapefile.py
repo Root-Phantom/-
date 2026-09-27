@@ -91,7 +91,7 @@ def extract_archive(path: Path, dest: Path) -> Path:
                 for member in zf.namelist():
                     # جلوگیری از Zip Slip
                     target = (dest / member).resolve()
-                    if not str(target).startswith(str(dest.resolve())):
+                    if not target.is_relative_to(dest.resolve()):
                         raise HTTPException(400, "فایل فشرده حاوی مسیر نامعتبر است.")
                 zf.extractall(dest)
         except zipfile.BadZipFile:

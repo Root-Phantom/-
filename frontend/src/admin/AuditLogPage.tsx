@@ -50,7 +50,7 @@ export default function AuditLogPage() {
   const maxAction = Math.max(1, ...(summary?.by_action.map((u) => u.count) || [1]));
 
   return (
-    <div style={{ padding: 14, height: "100%", overflow: "auto" }}>
+    <div className="page">
       {summary && (
         <div className="row" style={{ alignItems: "stretch", marginBottom: 12 }}>
           <div className="card grow" style={{ marginBottom: 0, minWidth: 260 }}>
@@ -124,19 +124,19 @@ export default function AuditLogPage() {
         <ErrorBox msg={error} />
         {!items ? <Loading /> : (
           <div style={{ overflowX: "auto" }}>
-            <table className="grid">
+            <table className="grid stack-mobile">
               <thead>
                 <tr><th>زمان</th><th>کاربر</th><th>رویداد</th><th>شرح</th><th>IP</th><th>نتیجه</th></tr>
               </thead>
               <tbody>
                 {items.map((r) => (
                   <tr key={r.id} onClick={() => setDetail(r)} style={{ cursor: "pointer" }}>
-                    <td className="tiny nowrap">{shamsi(r.created_at)}</td>
-                    <td><strong>{r.username}</strong></td>
-                    <td><span className="badge badge-primary">{r.action_label || r.action}</span></td>
-                    <td style={{ maxWidth: 520, whiteSpace: "normal" }}>{r.summary}</td>
-                    <td className="mono">{r.ip_address || "—"}</td>
-                    <td><span className={`badge ${r.status === "success" ? "badge-success" : "badge-danger"}`}>{r.status === "success" ? "موفق" : "ناموفق"}</span></td>
+                    <td data-label="زمان" className="tiny nowrap">{shamsi(r.created_at)}</td>
+                    <td data-label="کاربر"><strong>{r.username}</strong></td>
+                    <td data-label="رویداد"><span className="badge badge-primary">{r.action_label || r.action}</span></td>
+                    <td data-label="شرح" style={{ maxWidth: 520, whiteSpace: "normal" }}>{r.summary}</td>
+                    <td data-label="IP" className="mono">{r.ip_address || "—"}</td>
+                    <td data-label="نتیجه"><span className={`badge ${r.status === "success" ? "badge-success" : "badge-danger"}`}>{r.status === "success" ? "موفق" : "ناموفق"}</span></td>
                   </tr>
                 ))}
               </tbody>

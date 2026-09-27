@@ -89,7 +89,7 @@ export default function UploadWizard({ onImported }: { onImported: (layerId: str
     });
 
   return (
-    <div style={{ padding: 14, height: "100%", overflow: "auto" }}>
+    <div className="page">
       <div className="card" style={{ maxWidth: 980, margin: "0 auto 14px" }}>
         <div className="steps">
           {["انتخاب فایل", "بررسی و نگاشت ستون‌ها", "پایان"].map((s, i) => (

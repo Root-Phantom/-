@@ -83,9 +83,9 @@ export default function LayerManager({
   if (!layers) return <Loading />;
 
   return (
-    <div style={{ display: "flex", gap: 14, padding: 14, height: "100%", overflow: "auto", flexWrap: "wrap", alignItems: "flex-start" }}>
+    <div className="page page-split">
       {/* فهرست لایه‌ها */}
-      <div className="card" style={{ flex: "0 0 300px", maxWidth: "100%" }}>
+      <div className="card page-split-side">
         <h3 style={{ justifyContent: "space-between" }}>
           <span>🗂 لایه‌ها</span>
           <button className="btn btn-sm btn-primary" onClick={() => setShowNewLayer(true)}>＋ لایه جدید</button>
@@ -116,7 +116,7 @@ export default function LayerManager({
 
       {/* جزئیات لایه و ستون‌ها */}
       {layer && (
-        <div style={{ flex: "1 1 520px", minWidth: 0 }}>
+        <div className="page-split-main">
           <LayerSettings key={layer.id} layer={layer} fields={fields} onSaved={refreshAll} />
 
           <div className="card">
@@ -133,7 +133,7 @@ export default function LayerManager({
               <Empty text="ستونی تعریف نشده است." />
             ) : (
               <div style={{ overflowX: "auto" }}>
-                <table className="grid">
+                <table className="grid stack-mobile">
                   <thead>
                     <tr>
                       <th>ترتیب</th>
@@ -149,20 +149,20 @@ export default function LayerManager({
                   <tbody>
                     {fields.map((f, i) => (
                       <tr key={f.id}>
-                        <td className="nowrap">
+                        <td data-label="ترتیب" className="nowrap">
                           <button className="btn btn-sm btn-ghost" disabled={i === 0} onClick={() => moveField(f, -1)} title="بالا">▲</button>
                           <button className="btn btn-sm btn-ghost" disabled={i === fields.length - 1} onClick={() => moveField(f, 1)} title="پایین">▼</button>
                         </td>
-                        <td><strong>{f.label}</strong>{f.unit && <span className="muted tiny"> ({f.unit})</span>}</td>
-                        <td className="mono">{f.key}</td>
-                        <td>
+                        <td data-label="عنوان"><strong>{f.label}</strong>{f.unit && <span className="muted tiny"> ({f.unit})</span>}</td>
+                        <td data-label="شناسه فنی" className="mono">{f.key}</td>
+                        <td data-label="نوع">
                           {TYPE_LABEL[f.data_type]}
                           {f.data_type === "select" && <div className="tiny muted">{f.options.join("، ")}</div>}
                         </td>
-                        <td>{f.is_required ? "✔" : ""}</td>
-                        <td>{f.is_searchable ? "✔" : ""}</td>
-                        <td>{f.default_value || <span className="cell-empty">—</span>}</td>
-                        <td className="nowrap">
+                        <td data-label="اجباری">{f.is_required ? "✔" : ""}</td>
+                        <td data-label="جست‌وجو">{f.is_searchable ? "✔" : ""}</td>
+                        <td data-label="پیش‌فرض">{f.default_value || <span className="cell-empty">—</span>}</td>
+                        <td data-label="عملیات" className="nowrap">
                           <button className="btn btn-sm btn-ghost" onClick={() => setEditField(f)} title="ویرایش">✏</button>
                           {isAdmin && !f.is_system && (
                             <button

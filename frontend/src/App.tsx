@@ -68,7 +68,22 @@ export default function App() {
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const [archiveReason, setArchiveReason] = useState("");
   const [showBulk, setShowBulk] = useState(false);
-  const [tableH, setTableH] = useState(300);
+  const [tableH, setTableH] = useState(defaultTableHeight);
+
+  // با چرخش گوشی یا تغییر اندازه پنجره، جدول از صفحه بیرون نزند
+  useEffect(() => {
+    const onResize = () => setTableH((h) => Math.min(h, maxTableHeight()));
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // بستن منوی کناری با کلید Esc
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setSidebarOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [sidebarOpen]);
 
   const perms = session?.permissions;
   const canEdit = Boolean(perms?.edit);
@@ -297,22 +312,22 @@ export default function App() {
     toast("از سامانه خارج شدید.");
   };
 
-  // ---- کشیدن مرز جدول ----
-  const startResize = (e: React.MouseEvent) => {
+  // ---- کشیدن مرز جدول (موس و لمس) ----
+  const startResize = (e: React.PointerEvent) => {
     e.preventDefault();
     const startY = e.clientY;
     const startH = tableH;
-    const move = (ev: MouseEvent) => {
-      const h = Math.min(window.innerHeight - 200, Math.max(90, startH - (ev.clientY - startY)));
-      setTableH(h);
+    const move = (ev: PointerEvent) => {
+      setTableH(Math.min(maxTableHeight(), Math.max(90, startH - (ev.clientY - startY))));
     };
     const up = () => {
-      window.removeEventListener("mousemove", move);
-      window.removeEventListener("mouseup", up);
-      window.dispatchEvent(new Event("resize"));
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
     };
-    window.addEventListener("mousemove", move);
-    window.addEventListener("mouseup", up);
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
   };
 
   if (!session) return <Loading text="در حال اتصال به سامانه…" />;
@@ -331,7 +346,7 @@ export default function App() {
     <div className="app">
       <header className="header">
         {tab === "map" && (
-          <button className="btn btn-sm menu-toggle" onClick={() => setSidebarOpen((o) => !o)} aria-label="منو">☰</button>
+          <button className="btn btn-sm menu-toggle" onClick={() => setSidebarOpen((o) => !o)} aria-label="لایه‌ها و جست‌وجو" aria-expanded={sidebarOpen}>☰</button>
         )}
         <div className="brand">
           <div className="brand-mark">🛣</div>
@@ -340,11 +355,11 @@ export default function App() {
             <span>شهرداری پلدختر</span>
           </div>
         </div>
-        <nav>
+        {tabs.filter((t) => t.show).length > 1 && <nav>
           {tabs.filter((t) => t.show).map((t) => (
-            <button key={t.id} className={tab === t.id ? "active" : ""} onClick={() => setTab(t.id)}>{t.label}</button>
+            <button key={t.id} className={tab === t.id ? "active" : ""} onClick={() => { setTab(t.id); setSidebarOpen(false); }}>{t.label}</button>
           ))}
-        </nav>
+        </nav>}
         <div className="spacer" />
         <div className="userbox">
           {session.authenticated && session.user ? (
@@ -358,7 +373,7 @@ export default function App() {
             </>
           ) : (
             <>
-              <span className="badge badge-muted">کاربر عمومی</span>
+              <span className="badge badge-muted hide-phone">کاربر عمومی</span>
               <button className="btn btn-sm btn-primary" onClick={() => setShowLogin(true)}>ورود کارکنان</button>
             </>
           )}
@@ -368,7 +383,12 @@ export default function App() {
       <div className="main">
         {tab === "map" && (
           <>
+            {sidebarOpen && <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />}
             <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+              <div className="sidebar-head">
+                <strong>لایه‌ها و جست‌وجو</strong>
+                <button className="x-btn" onClick={() => setSidebarOpen(false)} aria-label="بستن">×</button>
+              </div>
               <div className="card">
                 <h3>🗂 لایه‌ها</h3>
                 {layers.length === 0 && (
@@ -393,7 +413,7 @@ export default function App() {
                       }
                     />
                     <label className="checkbox grow" style={{ fontWeight: l.id === activeLayerId ? 700 : 400 }}>
-                      <input type="radio" name="active-layer" checked={l.id === activeLayerId} onChange={() => setActiveLayerId(l.id)} />
+                      <input type="radio" name="active-layer" checked={l.id === activeLayerId} onChange={() => { setActiveLayerId(l.id); setSidebarOpen(false); }} />
                       <span>{l.name}</span>
                     </label>
                     <span className="tiny muted" title={GEOM_LABEL[l.geom_type]}>{fa(l.feature_count)}</span>
@@ -457,7 +477,7 @@ export default function App() {
                     onSpatialFilter={(g) => { setSpatial(g); setPage(1); }}
                   />
                 </div>
-                <div className="resizer" onMouseDown={startResize} title="برای تغییر اندازه بکشید" />
+                <div className="resizer" onPointerDown={startResize} title="برای تغییر اندازه بکشید" role="separator" aria-orientation="horizontal" />
                 <div className="pane-table" style={{ height: tableH }}>
                   <div className="table-toolbar">
                     <strong>جدول توصیفی {activeLayer ? `«${activeLayer.name}»` : ""}</strong>
@@ -768,4 +788,19 @@ function BulkEditModal({
       </div>
     </Modal>
   );
+}
+
+// ---------------- اندازه جدول توصیفی ----------------
+
+/** بیشینه ارتفاع جدول تا همیشه بخشی از نقشه دیده شود. */
+function maxTableHeight(): number {
+  return Math.max(140, window.innerHeight - (window.innerWidth <= 640 ? 230 : 200));
+}
+
+/** ارتفاع آغازین جدول بر اساس اندازه صفحه (گوشی، تبلت، دسکتاپ). */
+function defaultTableHeight(): number {
+  const h = window.innerHeight;
+  if (window.innerWidth <= 640) return Math.round(h * 0.38);
+  if (window.innerWidth <= 1024) return Math.round(h * 0.35);
+  return Math.min(300, maxTableHeight());
 }

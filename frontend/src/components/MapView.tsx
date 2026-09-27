@@ -108,6 +108,10 @@ export default function MapView(props: MapViewProps) {
     return m;
   }, [fields]);
 
+  // محتوای پاپ‌آپ هنگام باز شدن ساخته می‌شود تا پس از ورود/خروج یا بارگذاری ستون‌ها کهنه نماند
+  const popupCtx = useRef({ canEdit, canSuggest, labelByKey, layers });
+  popupCtx.current = { canEdit, canSuggest, labelByKey, layers };
+
   const colorOf = (layerId: string) => {
     const lay = layers.find((l) => l.id === layerId);
     const c = (lay?.style as { color?: string })?.color;
@@ -171,7 +175,12 @@ export default function MapView(props: MapViewProps) {
       cb.current.onDrawModeChange("none");
     });
 
+    // هر تغییر اندازه ظرف نقشه (چرخش گوشی، کشیدن جدول، منوی کناری) به لیفلت اطلاع داده می‌شود
+    const ro = new ResizeObserver(() => m.invalidateSize({ debounceMoveend: true }));
+    ro.observe(mapEl.current);
+
     return () => {
+      ro.disconnect();
       m.remove();
       map.current = null;
     };
@@ -210,8 +219,6 @@ export default function MapView(props: MapViewProps) {
       if (layerGroups.current[id]) continue;
 
       const color = colorOf(id);
-      const lay = layers.find((l) => l.id === id);
-      const labelField = lay?.label_field;
 
       const g = L.geoJSON(data, {
         style: (feat) => {
@@ -235,33 +242,36 @@ export default function MapView(props: MapViewProps) {
           }),
         onEachFeature: (feat, lyr) => {
           const fid = String(feat.properties?.__id || feat.id || "");
-          const props = feat.properties || {};
-          const title =
-            (labelField && props[labelField]) ||
-            props.nam || props.name || props.anvan || "بدون نام";
 
-          const rows = Object.entries(props)
-            .filter(([k, v]) => !k.startsWith("__") && v !== null && v !== "" && v !== undefined)
-            .slice(0, 8)
-            .map(
-              ([k, v]) =>
-                `<tr><td>${escapeHtml(labelByKey[k] || k)}</td><td><strong>${escapeHtml(
-                  String(v),
-                )}</strong></td></tr>`,
-            )
-            .join("");
+          lyr.bindPopup(() => {
+            const { canEdit: edit, canSuggest: suggest, labelByKey: labels, layers: lays } = popupCtx.current;
+            const props = feat.properties || {};
+            const labelField = lays.find((l) => l.id === id)?.label_field;
+            const title =
+              (labelField && props[labelField]) ||
+              props.nam || props.name || props.anvan || "بدون نام";
 
-          const actions: string[] = [];
-          if (canEdit) actions.push(`<button class="btn btn-sm btn-primary" data-act="edit">ویرایش</button>`);
-          if (canSuggest) actions.push(`<button class="btn btn-sm" data-act="suggest">پیشنهاد نام</button>`);
+            const rows = Object.entries(props)
+              .filter(([k, v]) => !k.startsWith("__") && v !== null && v !== "" && v !== undefined)
+              .slice(0, 8)
+              .map(
+                ([k, v]) =>
+                  `<tr><td>${escapeHtml(labels[k] || k)}</td><td><strong>${escapeHtml(
+                    String(v),
+                  )}</strong></td></tr>`,
+              )
+              .join("");
 
-          const html = `
-            <div class="popup-title">${escapeHtml(String(title))}</div>
-            <table class="popup-table">${rows}</table>
-            ${props.__archived ? '<div class="badge badge-muted" style="margin-top:6px">آرشیو شده</div>' : ""}
-            <div class="popup-actions">${actions.join("")}</div>`;
+            const actions: string[] = [];
+            if (edit) actions.push(`<button class="btn btn-sm btn-primary" data-act="edit">ویرایش</button>`);
+            if (suggest) actions.push(`<button class="btn btn-sm" data-act="suggest">پیشنهاد نام</button>`);
 
-          lyr.bindPopup(html, { maxWidth: 320, minWidth: 200 });
+            return `
+              <div class="popup-title">${escapeHtml(String(title))}</div>
+              <table class="popup-table">${rows}</table>
+              ${props.__archived ? '<div class="badge badge-muted" style="margin-top:6px">آرشیو شده</div>' : ""}
+              <div class="popup-actions">${actions.join("")}</div>`;
+          }, { maxWidth: 320, minWidth: 200 });
 
           lyr.on("click", () => cb.current.onSelect(fid));
           lyr.on("popupopen", (e: L.LeafletEvent) => {
@@ -282,7 +292,7 @@ export default function MapView(props: MapViewProps) {
       layerGroups.current[id] = g;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visibleLayerIds, layerData, layers, canEdit, canSuggest, labelByKey]);
+  }, [visibleLayerIds, layerData, layers]);
 
   // ---------------- پرش به لایه فعال ----------------
   const fittedRef = useRef<string | null>(null);
@@ -527,7 +537,7 @@ export default function MapView(props: MapViewProps) {
       </div>
 
       {drawMode !== "none" && (
-        <div className="map-overlay map-hint" style={{ insetInlineEnd: 60 }}>
+        <div className="map-overlay map-hint">
           {drawMode === "point" && "روی نقشه کلیک کنید تا نقطه ثبت شود."}
           {drawMode === "line" && "برای رسم معبر کلیک کنید؛ روی آخرین نقطه دوبار کلیک کنید تا پایان یابد."}
           {drawMode === "polygon" && "برای رسم محدوده کلیک کنید؛ روی نقطه آغاز کلیک کنید تا بسته شود."}

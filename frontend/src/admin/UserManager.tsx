@@ -41,7 +41,7 @@ export default function UserManager({ currentUserId }: { currentUserId: string }
   };
 
   return (
-    <div style={{ padding: 14, height: "100%", overflow: "auto" }}>
+    <div className="page">
       <div className="card">
         <div className="row" style={{ marginBottom: 10 }}>
           <input className="input grow" placeholder="جست‌وجوی نام یا نام کاربری…" value={q} onChange={(e) => { setQ(e.target.value); setPage(1); }} style={{ maxWidth: 320 }} />
@@ -55,20 +55,20 @@ export default function UserManager({ currentUserId }: { currentUserId: string }
         <ErrorBox msg={error} />
         {!items ? <Loading /> : (
           <div style={{ overflowX: "auto" }}>
-            <table className="grid">
+            <table className="grid stack-mobile">
               <thead>
                 <tr><th>نام کاربری</th><th>نام کامل</th><th>سطح دسترسی</th><th>تلفن</th><th>وضعیت</th><th>آخرین ورود</th><th>عملیات</th></tr>
               </thead>
               <tbody>
                 {items.map((u) => (
                   <tr key={u.id}>
-                    <td className="mono">{u.username}</td>
-                    <td>{u.full_name}{u.id === currentUserId && <span className="badge badge-primary" style={{ marginInlineStart: 6 }}>شما</span>}</td>
-                    <td><span className={`badge ${u.role === "admin" ? "badge-danger" : u.role === "editor" ? "badge-primary" : "badge-muted"}`}>{ROLE_LABEL[u.role]}</span></td>
-                    <td className="mono">{u.phone || "—"}</td>
-                    <td><span className={`badge ${u.is_active ? "badge-success" : "badge-muted"}`}>{u.is_active ? "فعال" : "غیرفعال"}</span></td>
-                    <td className="tiny">{shamsi(u.last_login_at)}</td>
-                    <td className="nowrap">
+                    <td data-label="نام کاربری" className="mono">{u.username}</td>
+                    <td data-label="نام کامل">{u.full_name}{u.id === currentUserId && <span className="badge badge-primary" style={{ marginInlineStart: 6 }}>شما</span>}</td>
+                    <td data-label="سطح دسترسی"><span className={`badge ${u.role === "admin" ? "badge-danger" : u.role === "editor" ? "badge-primary" : "badge-muted"}`}>{ROLE_LABEL[u.role]}</span></td>
+                    <td data-label="تلفن" className="mono">{u.phone || "—"}</td>
+                    <td data-label="وضعیت"><span className={`badge ${u.is_active ? "badge-success" : "badge-muted"}`}>{u.is_active ? "فعال" : "غیرفعال"}</span></td>
+                    <td data-label="آخرین ورود" className="tiny">{shamsi(u.last_login_at)}</td>
+                    <td data-label="عملیات" className="nowrap">
                       <button className="btn btn-sm btn-ghost" onClick={() => setEditing(u)} title="ویرایش">✏</button>
                       {u.id !== currentUserId && (
                         <>

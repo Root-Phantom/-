@@ -19,7 +19,7 @@
 10. [نخستین ورود و درون‌ریزی شیپ‌فایل پلدختر](#10-نخستین-ورود-و-درونریزی-شیپفایل-پلدختر)
 11. [IIS و HTTPS (پیشنهادی برای محیط عملیاتی)](#11-iis-و-https)
 12. [پشتیبان‌گیری و بازیابی](#12-پشتیبانگیری-و-بازیابی)
-13. [به‌روزرسانی نسخه](#13-بهروزرسانی-نسخه)
+13. [به‌روزرسانی نسخه](#13-بهروزرسانی-نسخه) · [ساخت مدیر و بازیابی گذرواژه](#105-ساخت-مدیر-و-بازیابی-گذرواژه)
 14. [نصب روی سرور بدون اینترنت](#14-نصب-روی-سرور-بدون-اینترنت)
 15. [عیب‌یابی](#15-عیبیابی)
 16. [چک‌لیست امنیتی](#16-چکلیست-امنیتی)
@@ -350,6 +350,24 @@ Compress-Archive -Path C:\PoldokhtarGIS\pol_final\pol.* -DestinationPath C:\Pold
 
 همه اقدامات (ورود و خروج، تلاش ناموفق ورود، ایجاد/ویرایش/آرشیو/حذف، جست‌وجو، آپلود، خروجی، پیشنهاد و بررسی آن) با نام کاربر، زمان، IP و مقدار قبل و بعد در **لاگ سامانه** ثبت می‌شوند.
 
+### 10.5 ساخت مدیر و بازیابی گذرواژه
+
+**روش عادی (از رابط کاربری):** با حساب مدیر وارد شوید ← تب **👥 کاربران** ← **＋ تعریف کاربر جدید** ← نام کاربری، گذرواژه اولیه و سطح دسترسی «مدیر کل» یا «کارشناس» را انتخاب کنید. کاربر جدید در نخستین ورود گذرواژه را تغییر می‌دهد. ویرایش، غیرفعال‌سازی و بازنشانی گذرواژه هم در همین صفحه است.
+
+**از روی سرور (وقتی نمی‌توانید وارد شوید یا مدیری وجود ندارد):** در PowerShell با دسترسی Administrator:
+
+```powershell
+cd C:\PoldokhtarGIS\deploy
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+
+.\create-admin.ps1 -List                                   # فهرست کاربران
+.\create-admin.ps1 -Username admin2 -FullName "مدیر دوم"   # مدیر جدید (گذرواژه پرسیده می‌شود)
+.\create-admin.ps1 -Username admin -Force                  # کاربر موجود ← مدیر + گذرواژه جدید
+.\create-admin.ps1 -ResetPassword -Username ali            # فراموشی گذرواژه یک کاربر
+```
+
+گذرواژه باید حداقل ۸ نویسه و شامل حرف و رقم باشد. نیازی به ری‌استارت سرویس نیست.
+
 ---
 
 ## 11. IIS و HTTPS
@@ -476,17 +494,44 @@ $env:PGPASSWORD = "PolDb@2025!x"
 
 ## 13. به‌روزرسانی نسخه
 
-1. فایل‌های نسخه جدید را روی `C:\PoldokhtarGIS` کپی کنید (فایل `backend\.env` و پوشه `backend\.venv` را بازنویسی نکنید).
-2. اجرا کنید:
+فایل‌های `backend\.env` (تنظیمات و گذرواژه پایگاه داده)، `backend\.venv`، `backend\uploads` و `backend\logs` روی سرور **هرگز نباید بازنویسی شوند**. اسکریپت‌های زیر این کار را خودکار و امن انجام می‌دهند.
 
-```powershell
-cd C:\PoldokhtarGIS\deploy
-.\update.ps1
+### 13.1 ساخت بسته به‌روزرسانی (روی رایانه توسعه — Mac/Linux)
+
+```bash
+./deploy/make-package.sh
 ```
 
-این اسکریپت پشتیبان می‌گیرد، سرویس را متوقف می‌کند، بسته‌ها را نصب و رابط کاربری را می‌سازد، جداول جدید را ایجاد و سرویس را اجرا می‌کند.
+رابط کاربری ساخته می‌شود و فایلی مانند `dist-packages/PoldokhtarGIS-update-20260927-1930.zip` ساخته می‌شود (بدون `.env`، `.venv` و `node_modules`). در ویندوز معادل آن: `npm ci && npm run build` در پوشه `frontend` و فشرده‌کردن پوشه‌های `backend` (بدون `.venv` و `.env`)، `frontend` (بدون `node_modules`)، `deploy` و `docs`.
 
----
+### 13.2 اعمال روی سرور
+
+فایل ZIP را (با Remote Desktop، فلش یا اشتراک شبکه) مثلاً در `C:\Temp` کپی کنید و در PowerShell با دسترسی Administrator:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+Expand-Archive C:\Temp\PoldokhtarGIS-update-20260927-1930.zip C:\Temp\pol-update -Force
+C:\Temp\pol-update\deploy\apply-update.ps1
+```
+
+این اسکریپت (اگر مسیر نصب متفاوت است: `-InstallDir D:\PoldokhtarGIS`):
+
+1. فایل‌های جدید را روی `C:\PoldokhtarGIS` کپی می‌کند و `.env`، `.venv`، `uploads`، `logs` و `deploy\tools` را دست نمی‌زند؛
+2. پوشه `frontend\dist` را کامل جایگزین می‌کند؛
+3. `update.ps1` را اجرا می‌کند: پشتیبان پایگاه داده ← توقف سرویس ← نصب بسته‌های پایتون ← ساخت جداول جدید ← اجرای سرویس؛
+4. سلامت سامانه را بررسی می‌کند.
+
+سپس در مرورگر `Ctrl+F5` بزنید. پس از آن `C:\Temp\pol-update` را می‌توانید پاک کنید.
+
+### 13.3 فقط ری‌استارت
+
+```powershell
+Restart-Service PoldokhtarGIS                 # اگر به‌صورت سرویس نصب شده
+Get-Service PoldokhtarGIS                     # وضعیت
+Get-Content C:\PoldokhtarGIS\backend\logs\service.log -Tail 50
+```
+
+اگر `Get-Service PoldokhtarGIS` خطای «Cannot find any service» داد، سامانه در یک پنجره PowerShell با `run-server.ps1` اجرا شده است: در همان پنجره `Ctrl+C` بزنید و دوباره `.\run-server.ps1 -Port 8000` را اجرا کنید؛ یا بهتر، یک‌بار `.\install-service.ps1 -Port 8000` را اجرا کنید تا با روشن شدن سرور خودکار بالا بیاید.
 
 ## 14. نصب روی سرور بدون اینترنت
 
@@ -592,7 +637,12 @@ Invoke-RestMethod http://127.0.0.1:8000/api/health
 .\schedule-backup.ps1 -At "02:00"
 .\restore.ps1 -BackupFile C:\Backups\PoldokhtarGIS\poldokhtar_gis_YYYYMMDD_HHMMSS.dump
 
+# ---------- کاربران ----------
+.\create-admin.ps1 -Username admin2              # ساخت مدیر
+.\create-admin.ps1 -ResetPassword -Username ali  # بازنشانی گذرواژه
+
 # ---------- به‌روزرسانی / حذف ----------
+C:\Temp\pol-update\deploy\apply-update.ps1       # از بسته استخراج‌شده
 .\update.ps1
 .\uninstall-service.ps1
 ```

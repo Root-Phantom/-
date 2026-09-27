@@ -155,18 +155,23 @@ def _build_scalar(col, cond: SearchCondition, *, numeric: bool) -> Optional[Colu
     return mapping.get(op)
 
 
+# یکسان‌سازی نگارش فارسی/عربی: هر نویسه سمت چپ به نویسه سمت راست تبدیل می‌شود.
+# همین نگاشت هم روی متن جست‌وجو و هم (با translate) روی داده‌های پایگاه داده اعمال می‌شود.
+_NORMALIZE = {
+    "ي": "ی", "ى": "ی", "ك": "ک", "ۀ": "ه", "ة": "ه",
+    "أ": "ا", "إ": "ا", "آ": "ا", "ٱ": "ا", "ؤ": "و",
+    "\u200c": " ",  # نیم‌فاصله
+    **{d: str(i) for i, d in enumerate("۰۱۲۳۴۵۶۷۸۹")},
+    **{d: str(i) for i, d in enumerate("٠١٢٣٤٥٦٧٨٩")},
+}
+_NORM_FROM = "".join(_NORMALIZE)
+_NORM_TO = "".join(_NORMALIZE.values())
+_NORM_TABLE = str.maketrans(_NORMALIZE)
+
+
 def _normalize_persian(s: str) -> str:
     """یکسان‌سازی حروف عربی/فارسی و اعداد برای جست‌وجوی روان."""
-    trans = {
-        "ي": "ی", "ك": "ک", "ۀ": "ه", "ة": "ه", "أ": "ا", "إ": "ا", "آ": "ا",
-        "ؤ": "و", "‌": " ",  # نیم‌فاصله
-    }
-    for a, b in trans.items():
-        s = s.replace(a, b)
-    # اعداد فارسی/عربی به لاتین
-    for i, (fa, ar) in enumerate(zip("۰۱۲۳۴۵۶۷۸۹", "٠١٢٣٤٥٦٧٨٩")):
-        s = s.replace(fa, str(i)).replace(ar, str(i))
-    return re.sub(r"\s+", " ", s).strip()
+    return re.sub(r"\s+", " ", s.translate(_NORM_TABLE)).strip()
 
 
 def _free_text_clause(q: str, searchable: list[str]) -> Optional[ColumnElement[bool]]:
@@ -176,12 +181,8 @@ def _free_text_clause(q: str, searchable: list[str]) -> Optional[ColumnElement[b
         return None
 
     def norm_col(key: str):
-        col = _json_text(key)
         # همان یکسان‌سازی را در سمت پایگاه داده اعمال می‌کنیم
-        expr = col
-        for a, b in (("ي", "ی"), ("ك", "ک"), ("ة", "ه"), ("ۀ", "ه"), ("آ", "ا"), ("‌", " ")):
-            expr = func.replace(expr, a, b)
-        return expr
+        return func.translate(_json_text(key), _NORM_FROM, _NORM_TO)
 
     # هر واژه باید در یکی از ستون‌ها پیدا شود (AND بین واژه‌ها، OR بین ستون‌ها)
     word_clauses = []

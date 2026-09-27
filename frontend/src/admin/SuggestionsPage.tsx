@@ -29,7 +29,7 @@ export default function SuggestionsPage({ onChanged, onShowFeature }: { onChange
   useEffect(() => { load(); }, [load]);
 
   return (
-    <div style={{ padding: 14, height: "100%", overflow: "auto" }}>
+    <div className="page">
       <div className="stat-grid">
         {(["pending", "approved", "rejected"] as const).map((s) => (
           <div
@@ -50,23 +50,23 @@ export default function SuggestionsPage({ onChanged, onShowFeature }: { onChange
           <Empty icon="💡" text={`پیشنهادی با وضعیت «${STATUS_LABEL[status]}» وجود ندارد.`} />
         ) : (
           <div style={{ overflowX: "auto" }}>
-            <table className="grid">
+            <table className="grid stack-mobile">
               <thead>
                 <tr><th>تاریخ</th><th>معبر (نام فعلی)</th><th>نام پیشنهادی</th><th>دلیل</th><th>پیشنهاددهنده</th><th>وضعیت</th><th>عملیات</th></tr>
               </thead>
               <tbody>
                 {items.map((s) => (
                   <tr key={s.id}>
-                    <td className="tiny nowrap">{shamsi(s.created_at)}</td>
-                    <td>{s.feature_label || "—"}</td>
-                    <td><strong>{s.suggested_name}</strong></td>
-                    <td style={{ maxWidth: 260, whiteSpace: "normal" }} className="tiny">{s.reason || "—"}</td>
-                    <td className="tiny">{s.submitter_name || "ناشناس"}<div className="mono">{s.submitter_phone}</div></td>
-                    <td>
+                    <td data-label="تاریخ" className="tiny nowrap">{shamsi(s.created_at)}</td>
+                    <td data-label="معبر">{s.feature_label || "—"}</td>
+                    <td data-label="نام پیشنهادی"><strong>{s.suggested_name}</strong></td>
+                    <td data-label="دلیل" style={{ maxWidth: 260, whiteSpace: "normal" }} className="tiny">{s.reason || "—"}</td>
+                    <td data-label="پیشنهاددهنده" className="tiny">{s.submitter_name || "ناشناس"}<div className="mono">{s.submitter_phone}</div></td>
+                    <td data-label="وضعیت">
                       <span className={`badge ${s.status === "approved" ? "badge-success" : s.status === "rejected" ? "badge-danger" : "badge-warn"}`}>{STATUS_LABEL[s.status]}</span>
                       {s.reviewed_by_name && <div className="tiny muted">{s.reviewed_by_name}</div>}
                     </td>
-                    <td className="nowrap">
+                    <td data-label="عملیات" className="nowrap">
                       {s.feature_id && <button className="btn btn-sm btn-ghost" onClick={() => onShowFeature(s.feature_id!)} title="نمایش روی نقشه">🗺</button>}
                       {s.status === "pending" && <button className="btn btn-sm btn-primary" onClick={() => setReview(s)}>بررسی</button>}
                     </td>
