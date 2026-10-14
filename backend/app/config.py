@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     FIRST_ADMIN_FULLNAME: str = "مدیر سامانه"
 
     # --- CORS: دامنه‌های مجاز، با کاما جدا شده ---
-    CORS_ORIGINS: str = "http://localhost:5173"
+    CORS_ORIGINS: str = "http://localhost:8006,http://127.0.0.1:8006,http://localhost:8005,http://127.0.0.1:8005,http://localhost:5173"
 
     # --- آپلود ---
     UPLOAD_DIR: Path = BASE_DIR / "uploads"

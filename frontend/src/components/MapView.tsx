@@ -9,6 +9,7 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { FieldDef, GeoJsonGeometry, Layer as LayerT } from "../types";
+import MapSearch from "./MapSearch";
 
 // مسیر آیکون نشانگر پیش‌فرض پس از بسته‌بندی Vite درست تنظیم می‌شود
 delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
@@ -457,12 +458,47 @@ export default function MapView(props: MapViewProps) {
     onSpatialFilter(null);
   };
 
+  // انتخاب عارضه از جست‌وجوی نقشه: بزرگ‌نمایی (از طریق selectedId) و سپس باز کردن پاپ‌آپ
+  const focusFeature = (fid: string) => {
+    const m = map.current;
+    if (!m) return;
+    let target: L.Layer | null = null;
+    for (const g of Object.values(layerGroups.current)) {
+      g.eachLayer((lyr) => {
+        const f = (lyr as unknown as { feature?: GeoJSON.Feature }).feature;
+        if (String(f?.properties?.__id || "") === fid) target = lyr;
+      });
+      if (target) break;
+    }
+    if (!target) return;
+    const lyr: L.Layer = target;
+    let done = false;
+    const openIt = () => {
+      if (done) return;
+      done = true;
+      lyr.openPopup();
+    };
+    m.closePopup();
+    m.once("moveend", openIt);
+    window.setTimeout(openIt, 900);
+    onSelect(fid);
+  };
+
   const activeLayer = layers.find((l) => l.id === activeLayerId);
   const geomOfActive = activeLayer?.geom_type;
 
   return (
     <div className="map-area">
       <div id="map" ref={mapEl} />
+
+      <MapSearch
+        map={map}
+        layers={layers}
+        visibleLayerIds={visibleLayerIds}
+        layerData={layerData}
+        fields={fields}
+        onPickFeature={focusFeature}
+      />
 
       {/* نوار ابزار رسم */}
       <div className="map-overlay drawbar">

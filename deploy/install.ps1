@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Installs the Poldokhtar Street Management System (backend + database + frontend) on Windows Server.
 
@@ -31,7 +31,7 @@ param(
     [int]    $DbPort = 5432,
     [string] $DbName = "poldokhtar_gis",
     [string] $DbUser = "pol_user",
-    [int]    $AppPort = 8000,
+    [int]    $AppPort = 8005,
     [string] $PythonExe = "",
     [string] $PgBin = "",
     [string] $WheelsDir = "",
@@ -185,7 +185,7 @@ TRUST_PROXY_HEADERS=$trust
 FIRST_ADMIN_USERNAME=$AdminUsername
 FIRST_ADMIN_PASSWORD=$AdminPassword
 FIRST_ADMIN_FULLNAME=$AdminFullName
-CORS_ORIGINS=http://localhost:5173
+CORS_ORIGINS=http://localhost:8006,http://127.0.0.1:8006,http://localhost:5173
 MAX_UPLOAD_MB=200
 "@
     # UTF-8 without BOM (a BOM would corrupt the first key)

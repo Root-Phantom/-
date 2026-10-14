@@ -36,7 +36,20 @@
 cd C:\PoldokhtarGIS\deploy
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 .\install.ps1 -PostgresPassword "..." -DbPassword "..." -AdminPassword "..."
-.\install-service.ps1 -Port 8000
+.\install-service.ps1 -Port 8005
+```
+
+## استقرار با Docker روی اوبونتو
+
+راهنمای کامل: **[docs/DEPLOY_DOCKER.md](docs/DEPLOY_DOCKER.md)**
+
+خلاصه: دو سرویس (`backend` شامل رابط کاربری ساخته‌شده، و `db` یعنی PostgreSQL/PostGIS) با `docker-compose.yml` اجرا می‌شوند؛ هرکدام روی پورت جداگانه‌ای در هاست (پیش‌فرض `8005` و `55432`، قابل تغییر در `.env`) تا با سرویس‌های دیگر سرور تداخل نکنند.
+
+```bash
+cp .env.docker.example .env && nano .env   # DB_PASSWORD, SECRET_KEY, FIRST_ADMIN_PASSWORD
+docker compose build
+docker compose up -d
+curl http://localhost:8005/api/health
 ```
 
 ## اجرای محیط توسعه
@@ -49,14 +62,14 @@ docker run -d --name pol_pg -e POSTGRES_PASSWORD=devpass -e POSTGRES_DB=poldokht
 cd backend
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 cp .env.example .env    # DATABASE_URL=postgresql+psycopg://postgres:devpass@localhost:55432/poldokhtar_gis
-.venv/bin/uvicorn app.main:app --reload --port 8077
+.venv/bin/uvicorn app.main:app --reload --port 8005
 
-# رابط کاربری (پراکسی /api به پورت 8077)
+# رابط کاربری (پراکسی /api به پورت 8005)
 cd frontend
-npm install && npm run dev    # http://localhost:5173
+npm install && npm run dev    # http://localhost:8006
 ```
 
-مستندات API: `http://localhost:8077/api/docs`
+مستندات API: `http://localhost:8005/api/docs`
 
 ## ساختار پروژه
 
@@ -71,6 +84,10 @@ frontend/src/
   components/          نقشه، جدول توصیفی، جست‌وجو، فرم‌ها
   admin/               لایه‌ها و ستون‌ها، آپلود، کاربران، لاگ، پیشنهادها
 deploy/                اسکریپت‌های نصب، سرویس، پشتیبان‌گیری، به‌روزرسانی و web.config
-docs/DEPLOY.md         راهنمای استقرار
+docs/DEPLOY.md         راهنمای استقرار روی Windows Server
+docs/DEPLOY_DOCKER.md  راهنمای استقرار با Docker روی اوبونتو
+Dockerfile             ساخت ایمیج بک‌اند + رابط کاربری
+docker-compose.yml     سرویس‌های backend و db (هرکدام با پورت جداگانه)
+.env.docker.example    نمونه تنظیمات Docker Compose
 pol_final/             شیپ‌فایل معابر پلدختر (۴۴۸ معبر)
 ```

@@ -6,6 +6,9 @@ backend/.env
 backend/uploads/
 backend/logs/
 
+# Docker
+.env
+
 # Frontend
 frontend/node_modules/
 frontend/dist/

@@ -235,7 +235,7 @@ table.grid .cell-empty { color: var(--text-faint); }
 .map-legend .swatch.point { width: 11px; height: 11px; border-radius: 50%; }
 
 .map-hint {
-  inset-inline-end: 64px; top: 12px; padding: 8px 12px; font-size: 12px;
+  inset-inline-end: 64px; top: 62px; padding: 8px 12px; font-size: 12px;
   max-width: 290px; background: #fffbeb; border-color: #fde68a; color: #92400e;
 }
 
@@ -555,3 +555,43 @@ table.grid .cell-empty { color: var(--text-faint); }
 @media print {
   .header, .sidebar, .resizer, .drawbar, .toast-stack { display: none !important; }
 }
+
+/* ---------------- جست‌وجوی روی نقشه ---------------- */
+.map-search {
+  top: 12px; right: 56px; width: min(380px, calc(100% - 124px));
+  padding: 0; overflow: hidden; z-index: 650;
+}
+.map-search-row { display: flex; align-items: center; gap: 6px; padding: 0 10px; }
+.map-search-icon { font-size: 14px; opacity: .6; }
+.map-search-row input {
+  flex: 1; min-width: 0; border: 0; outline: 0; background: transparent;
+  font: inherit; font-size: 13.5px; padding: 10px 0; color: var(--text);
+}
+.map-search-row input::-webkit-search-cancel-button { display: none; }
+.map-search:focus-within { border-color: var(--primary); }
+.map-search-clear {
+  border: 0; background: transparent; color: var(--text-dim); cursor: pointer;
+  font-size: 14px; padding: 4px 6px; border-radius: var(--radius-sm);
+}
+.map-search-clear:hover { background: var(--surface-2); color: var(--text); }
+.map-search-list { border-top: 1px solid var(--border); max-height: min(60vh, 420px); overflow-y: auto; }
+.map-search-group {
+  padding: 7px 12px 3px; font-size: 11px; font-weight: 700; color: var(--text-faint);
+  background: var(--surface-2);
+}
+.map-search-item {
+  display: flex; align-items: flex-start; gap: 9px; width: 100%; padding: 8px 12px;
+  border: 0; background: transparent; cursor: pointer; text-align: right; font: inherit; color: inherit;
+}
+.map-search-item.active { background: var(--primary-soft); }
+.map-search-kind { width: 18px; flex: 0 0 auto; text-align: center; color: var(--text-dim); padding-top: 1px; }
+.map-search-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.map-search-text strong { font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.map-search-text .tiny { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.map-search-status { padding: 9px 12px; font-size: 12px; color: var(--text-dim); }
+
+@media (max-width: 640px) {
+  .map-search { top: 8px; right: 52px; width: auto; left: 62px; }
+  .map-hint { top: 58px; }
+}
+@media print { .map-search { display: none !important; } }

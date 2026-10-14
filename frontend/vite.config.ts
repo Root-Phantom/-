@@ -11,10 +11,10 @@ export default defineConfig({
     sourcemap: false,
   },
   server: {
-    port: 5173,
+    port: 8006,
     proxy: {
       // در حالت توسعه، درخواست‌های API به بک‌اند ارسال می‌شود
-      "/api": { target: "http://127.0.0.1:8077", changeOrigin: true },
+      "/api": { target: "http://127.0.0.1:8005", changeOrigin: true },
     },
   },
 });

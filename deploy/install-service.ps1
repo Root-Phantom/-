@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Registers the system as a Windows service (auto start, auto restart) using NSSM.
 
@@ -8,12 +8,12 @@
 
 .EXAMPLE
     .\install-service.ps1
-    .\install-service.ps1 -Port 8000 -BindAddress 127.0.0.1 -Workers 2     # behind IIS
+    .\install-service.ps1 -Port 8005 -BindAddress 127.0.0.1 -Workers 2     # behind IIS
 #>
 [CmdletBinding()]
 param(
     [string] $ServiceName = "PoldokhtarGIS",
-    [int]    $Port = 8000,
+    [int]    $Port = 8005,
     [string] $BindAddress = "0.0.0.0",
     [int]    $Workers = 2,
     [string] $NssmPath = ""

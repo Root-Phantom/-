@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Copies a new version (an extracted update package) over the installed system and restarts it.
 
@@ -72,7 +72,7 @@ if ($svc) {
     Start-Sleep -Seconds 6
     $svc.Refresh()
     Write-Host "Service status: $($svc.Status)"
-    $port = 8000
+    $port = 8005
     try {
         $nssm = Join-Path $InstallDir "deploy\tools\nssm.exe"
         if (-not (Test-Path $nssm)) { $nssm = "nssm.exe" }

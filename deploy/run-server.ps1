@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Runs the system in the foreground (for testing). Press Ctrl+C to stop.
 
@@ -8,7 +8,7 @@
 #>
 [CmdletBinding()]
 param(
-    [int]    $Port = 8000,
+    [int]    $Port = 8005,
     [string] $BindAddress = "0.0.0.0"
 )
 
