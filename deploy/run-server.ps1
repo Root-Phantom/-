@@ -8,7 +8,7 @@
 #>
 [CmdletBinding()]
 param(
-    [int]    $Port = 8005,
+    [int]    $Port = 7000,
     [string] $BindAddress = "0.0.0.0"
 )
 
@@ -20,7 +20,7 @@ if (-not (Test-Path $VenvPy)) { throw "Virtual environment not found. Run instal
 $env:PYTHONUTF8 = "1"
 Push-Location $Backend
 try {
-    Write-Host "Starting on http://${BindAddress}:$Port  (API docs: /api/docs)" -ForegroundColor Cyan
+    Write-Host "Starting on http://${BindAddress}:$Port" -ForegroundColor Cyan
     & $VenvPy -m uvicorn app.main:app --host $BindAddress --port $Port
 } finally {
     Pop-Location

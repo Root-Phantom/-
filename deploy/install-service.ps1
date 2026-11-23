@@ -8,12 +8,12 @@
 
 .EXAMPLE
     .\install-service.ps1
-    .\install-service.ps1 -Port 8005 -BindAddress 127.0.0.1 -Workers 2     # behind IIS
+    .\install-service.ps1 -Port 7000 -BindAddress 127.0.0.1 -Workers 2     # behind IIS
 #>
 [CmdletBinding()]
 param(
     [string] $ServiceName = "VeysianGIS",
-    [int]    $Port = 8005,
+    [int]    $Port = 7000,
     [string] $BindAddress = "0.0.0.0",
     [int]    $Workers = 2,
     [string] $NssmPath = ""

@@ -36,37 +36,37 @@
 cd C:\VeysianGIS\deploy
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 .\install.ps1 -PostgresPassword "..." -DbPassword "..." -AdminPassword "..."
-.\install-service.ps1 -Port 8005
+.\install-service.ps1 -Port 7000
 ```
 
 ## استقرار با Docker روی اوبونتو
 
 راهنمای کامل: **[docs/DEPLOY_DOCKER.md](docs/DEPLOY_DOCKER.md)**
 
-خلاصه: دو سرویس (`backend` شامل رابط کاربری ساخته‌شده، و `db` یعنی PostgreSQL/PostGIS) با `docker-compose.yml` اجرا می‌شوند؛ هرکدام روی پورت جداگانه‌ای در هاست (پیش‌فرض `8005` و `55432`، قابل تغییر در `.env`) تا با سرویس‌های دیگر سرور تداخل نکنند.
+خلاصه: دو سرویس (`backend` شامل رابط کاربری ساخته‌شده، و `db` یعنی PostgreSQL/PostGIS) با `docker-compose.yml` در بازه پورت‌های **7000 تا 7003** اجرا می‌شوند (پیش‌فرض `7000` برای سامانه و `7001` برای پایگاه داده، قابل تغییر در `.env`). همچنین ایمیج‌ها به صورت پیش‌فرض از **میرورهای ایرانی** (`docker.iranserver.com/`) بدون نیاز به فیلترشکن دریافت می‌شوند.
 
 ```bash
 cp .env.docker.example .env && nano .env   # DB_PASSWORD, SECRET_KEY, FIRST_ADMIN_PASSWORD
 docker compose build
 docker compose up -d
-curl http://localhost:8005/api/health
+curl http://localhost:7000/api/health
 ```
 
 ## اجرای محیط توسعه
 
 ```bash
 # پایگاه داده آزمایشی
-docker run -d --name veysian_pg -e POSTGRES_PASSWORD=devpass -e POSTGRES_DB=veysian_gis -p 55432:5432 postgis/postgis:16-3.4
+docker run -d --name veysian_pg -e POSTGRES_PASSWORD=devpass -e POSTGRES_DB=veysian_gis -p 7001:5432 postgis/postgis:16-3.4
 
 # بک‌اند
 cd backend
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-cp .env.example .env    # DATABASE_URL=postgresql+psycopg://postgres:devpass@localhost:55432/veysian_gis
-.venv/bin/uvicorn app.main:app --reload --port 8005
+cp .env.example .env    # DATABASE_URL=postgresql+psycopg://postgres:devpass@localhost:7001/veysian_gis
+.venv/bin/uvicorn app.main:app --reload --port 7000
 
-# رابط کاربری (پراکسی /api به پورت 8005)
+# رابط کاربری (پراکسی /api به پورت 7000)
 cd frontend
-npm install && npm run dev    # http://localhost:8006
+npm install && npm run dev    # http://localhost:7002
 ```
 
 ## ساختار پروژه

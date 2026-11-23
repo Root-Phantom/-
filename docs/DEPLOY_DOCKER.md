@@ -22,7 +22,7 @@
 
 ---
 
-## 0. معماری و پورت‌ها
+## 0. معماری، پورت‌ها و میرورهای ایرانی
 
 ```
  مرورگر کاربران ──HTTP/HTTPS──► کانتینر backend (FastAPI/Uvicorn + رابط کاربری React)
@@ -31,14 +31,38 @@
                                  کانتینر db (PostgreSQL 16 + PostGIS 3.4)
 ```
 
-دو سرویس با `docker-compose.yml` در ریشه پروژه مدیریت می‌شوند و هرکدام **پورت جداگانه‌ای روی هاست** می‌گیرند تا با سرویس‌های احتمالاً از قبل نصب‌شده روی سرور (مثلاً یک PostgreSQL دیگر، یا سرویسی روی 8000) تداخل نکنند:
+سرویس‌های پروژه در **بازه پورت‌های 7000 تا 7003** تنظیم شده‌اند تا با سایر سرویس‌های سرور تداخلی نداشته باشند:
 
-| سرویس | پورت داخل کانتینر | پورت پیش‌فرض روی هاست | متغیر در `.env` |
-|---|---|---|---|
-| backend (سامانه + رابط کاربری) | 8000 | **8005** | `APP_PORT` |
-| db (PostgreSQL/PostGIS) | 5432 | **55432** | `DB_PORT` |
+| سرویس / نقش | پورت داخل کانتینر | پورت پیش‌فرض روی هاست | متغیر در `.env` | توضیحات |
+|---|---|---|---|---|
+| backend (سامانه + رابط کاربری) | 8000 | **7000** | `APP_PORT` | دسترسی کاربران، نقشه و API |
+| db (PostgreSQL/PostGIS) | 5432 | **7001** | `DB_PORT` | دسترسی پایگاه داده |
+| frontend (توسعه Vite) | - | **7002** | - | سرور توسعه فرانت‌اند (`npm run dev`) |
+| رزرو / مانیتورینگ | - | **7003** | - | پورت اختیاری در بازه مجاز |
 
-> پورت‌ها دلخواه‌اند؛ اگر 8005 یا 55432 روی سرور شما هم اشغال بود، در فایل `.env` مقدار دیگری بدهید (مثلاً `APP_PORT=8101`) و دوباره `docker compose up -d` بزنید. پورت پایگاه داده فقط برای دسترسی مدیریتی (psql، ابزار گرافیکی) لازم است؛ در محیط عملیاتی بهتر است در فایروال بسته بماند (بخش ۵).
+> پورت‌ها با متغیرهای `APP_PORT` و `DB_PORT` در فایل `.env` قابل تغییرند. پورت پایگاه داده (7001) فقط برای دسترسی مدیریتی (psql، ابزار گرافیکی) لازم است و در محیط عملیاتی باید در فایروال بسته بماند (بخش ۵).
+
+### میرورهای ایرانی Docker برای دور زدن تحریم
+
+برای دریافت سریع ایمیج‌ها بدون نیاز به فیلترشکن، متغیر `DOCKER_REGISTRY_MIRROR` در فایل `.env` و `docker-compose.yml` تعبیه شده است. پیش‌فرض روی `docker.iranserver.com/` تنظیم است.
+
+میرورهای معتبر ایرانی قابل استفاده:
+- `docker.iranserver.com/` (پیش‌فرض)
+- `registry.docker.ir/`
+- `focker.ir/`
+- `docker.arvancloud.ir/`
+
+همچنین برای تنظیم دائم روی داکر سرور اوبونتو می‌توانید فایل `/etc/docker/daemon.json` را بسازید:
+```json
+{
+  "registry-mirrors": [
+    "https://docker.iranserver.com",
+    "https://registry.docker.ir",
+    "https://focker.ir"
+  ]
+}
+```
+سپس دستور `sudo systemctl restart docker` را بزنید.
 
 داده‌های پایگاه داده و فایل‌های آپلودی در دو **volume داکر** (`pgdata` و `uploads`) نگه داشته می‌شوند، پس با توقف یا بازسازی کانتینرها از بین نمی‌روند.
 
@@ -129,13 +153,12 @@ docker compose logs -f backend
 سرویس آماده است وقتی `docker compose ps` هر دو کانتینر را `healthy`/`running` نشان دهد. بررسی سلامت:
 
 ```bash
-curl http://localhost:8005/api/health
+curl http://localhost:7000/api/health
 ```
 
 خروجی باید `"status":"ok"` و نسخه PostGIS را نشان دهد (ساخت جداول و کاربر مدیر اولیه به‌صورت خودکار در نخستین اجرا انجام می‌شود).
 
-- سامانه: `http://IP-سرور:8005`
-- مستندات API: `http://IP-سرور:8005/api/docs`
+- سامانه: `http://IP-سرور:7000`
 
 توقف / اجرای دوباره:
 
@@ -151,7 +174,7 @@ docker compose up -d       # اجرای دوباره
 اگر از `ufw` استفاده می‌کنید، فقط پورت سامانه را باز کنید؛ پورت پایگاه داده را **باز نکنید** مگر برای اتصال مدیریتی موقت از IP مشخص لازم باشد:
 
 ```bash
-sudo ufw allow 8005/tcp
+sudo ufw allow 7000/tcp
 sudo ufw status
 ```
 
@@ -232,7 +255,7 @@ COOKIE_SECURE=true
 TRUST_PROXY_HEADERS=true
 ```
 
-و پروکسی را به `http://127.0.0.1:8005` (یا هر `APP_PORT` انتخابی) هدایت کنید. نصب و تنظیم دقیق Nginx/Caddy/Let's Encrypt در این راهنما نیامده و باید جدا انجام شود.
+و پروکسی را به `http://127.0.0.1:7000` (یا هر `APP_PORT` انتخابی) هدایت کنید. نصب و تنظیم دقیق Nginx/Caddy/Let's Encrypt در این راهنما نیامده و باید جدا انجام شود.
 
 ---
 
@@ -243,7 +266,8 @@ TRUST_PROXY_HEADERS=true
 | `docker compose up` خطای «variable is not set» می‌دهد | `.env` ساخته نشده یا مقداری خالی است | بخش ۳؛ `cp .env.docker.example .env` و پر کردن مقادیر |
 | کانتینر `db` بالا نمی‌آید یا `backend` دائم ری‌استارت می‌شود | گذرواژه پایگاه داده نادرست یا `db` هنوز سالم نیست | `docker compose logs db` و `docker compose logs backend` |
 | `/api/health` خطای database می‌دهد | سرویس `db` هنوز در حال راه‌اندازی است | چند ثانیه صبر کنید؛ `docker compose ps` باید `db` را healthy نشان دهد |
-| پورت 8005 یا 55432 از قبل اشغال است | سرویس دیگری همان پورت را گرفته | `APP_PORT`/`DB_PORT` را در `.env` عوض کنید و `docker compose up -d` |
+| پورت 7000 یا 7001 از قبل اشغال است | سرویس دیگری همان پورت را گرفته | `APP_PORT`/`DB_PORT` را در `.env` عوض کنید و `docker compose up -d` |
+| خطای تحریم یا timeout در دانلود ایمیج | رجیستری خارجی مسدود است | مقدار `DOCKER_REGISTRY_MIRROR` را در `.env` بررسی کنید (پیش‌فرض: `docker.iranserver.com/`) |
 | صفحه «رابط کاربری ساخته نشده است» | ساخت frontend در ایمیج شکست خورده | `docker compose build --no-cache backend` و بررسی خروجی مرحله `frontend-build` |
 | تغییرات کد پس از `git pull` دیده نمی‌شود | ایمیج بازسازی نشده | `docker compose build && docker compose up -d` |
 
@@ -252,7 +276,7 @@ TRUST_PROXY_HEADERS=true
 ```bash
 docker compose ps
 docker compose logs --tail=100 backend
-curl -s http://localhost:8005/api/health | python3 -m json.tool
+curl -s http://localhost:7000/api/health | python3 -m json.tool
 ```
 
 ---

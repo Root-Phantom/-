@@ -1,5 +1,7 @@
+ARG DOCKER_REGISTRY_MIRROR=docker.iranserver.com/
+
 # ---------- مرحله ۱: ساخت رابط کاربری (React/Vite) ----------
-FROM node:20-alpine AS frontend-build
+FROM ${DOCKER_REGISTRY_MIRROR}node:20-alpine AS frontend-build
 WORKDIR /frontend
 
 COPY frontend/package.json frontend/package-lock.json ./
@@ -9,7 +11,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # ---------- مرحله ۲: بک‌اند (Python/FastAPI) + رابط کاربری ساخته‌شده ----------
-FROM python:3.12-slim AS backend
+FROM ${DOCKER_REGISTRY_MIRROR}python:3.12-slim AS backend
 WORKDIR /app/backend
 
 ENV PYTHONUTF8=1 \

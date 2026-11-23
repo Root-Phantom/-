@@ -2,7 +2,8 @@ name: veysian-gis
 
 services:
   db:
-    image: postgis/postgis:16-3.4-alpine
+    # دریافت ایمیج پایگاه داده از میرور ایرانی (قابل تغییر در .env با DOCKER_REGISTRY_MIRROR)
+    image: ${DOCKER_REGISTRY_MIRROR:-docker.iranserver.com/}postgis/postgis:16-3.4-alpine
     container_name: veysian_db
     restart: unless-stopped
     environment:
@@ -12,8 +13,8 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      # پورت غیرپیش‌فرض روی هاست تا با پستگرس احتمالی خود سرور تداخل نکند؛ داخل شبکه داکر همچنان روی 5432 است
-      - "${DB_PORT:-55432}:5432"
+      # پورت پایگاه داده در بازه درخواستی (7000 تا 7003)
+      - "${DB_PORT:-7001}:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
@@ -25,6 +26,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        DOCKER_REGISTRY_MIRROR: ${DOCKER_REGISTRY_MIRROR:-docker.iranserver.com/}
     container_name: veysian_backend
     restart: unless-stopped
     depends_on:
@@ -41,13 +44,13 @@ services:
       FIRST_ADMIN_USERNAME: ${FIRST_ADMIN_USERNAME:-admin}
       FIRST_ADMIN_PASSWORD: ${FIRST_ADMIN_PASSWORD:?مقدار FIRST_ADMIN_PASSWORD را در فایل .env تعیین کنید}
       FIRST_ADMIN_FULLNAME: ${FIRST_ADMIN_FULLNAME:-مدیر سامانه}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8006,http://127.0.0.1:8006}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:7000,http://127.0.0.1:7000,http://localhost:7002,http://127.0.0.1:7002}
       MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-200}
     volumes:
       - uploads:/app/backend/uploads
     ports:
-      # پورت غیرپیش‌فرض روی هاست (مطابق قرارداد توسعه در README)؛ داخل کانتینر همیشه 8000 است
-      - "${APP_PORT:-8005}:8000"
+      # پورت سامانه در بازه درخواستی (7000 تا 7003)
+      - "${APP_PORT:-7000}:8000"
 
 volumes:
   pgdata:
