@@ -3,6 +3,7 @@ import { useMemo } from "react";
 
 import type { Feature, FieldDef } from "../types";
 import { Empty, Loading, Pager, cellText, fa, shamsi } from "../ui";
+import { IconArchive, IconEdit, IconHistory, IconLightbulb, IconSearch } from "./Icons";
 
 export interface AttributeTableProps {
   features: Feature[];
@@ -55,7 +56,7 @@ export default function AttributeTable(p: AttributeTableProps) {
     <>
       <div className="table-wrap">
         {features.length === 0 ? (
-          <Empty icon="🔍" text="عارضه‌ای یافت نشد. شرط‌های جست‌وجو را تغییر دهید." />
+          <Empty icon={<IconSearch size={36} />} text="عارضه‌ای یافت نشد. شرط‌های جست‌وجو را تغییر دهید." />
         ) : (
           <table className="grid">
             <thead>
@@ -126,27 +127,27 @@ export default function AttributeTable(p: AttributeTableProps) {
                   <td className="actions" onClick={(e) => e.stopPropagation()}>
                     {canEdit && (
                       <button className="btn btn-sm btn-ghost" onClick={() => onEdit(f.id)} title="ویرایش جدول توصیفی">
-                        ✏
+                        <IconEdit size={14} />
                       </button>
                     )}
                     {isStaff && (
                       <button className="btn btn-sm btn-ghost" onClick={() => onHistory(f.id)} title="تاریخچه تغییرات">
-                        🕘
+                        <IconHistory size={14} />
                       </button>
                     )}
                     {canSuggest && !canEdit && (
                       <button className="btn btn-sm btn-ghost" onClick={() => onSuggest(f.id)} title="پیشنهاد نام">
-                        💡
+                        <IconLightbulb size={14} />
                       </button>
                     )}
                     {canEdit &&
                       (f.is_archived ? (
                         <button className="btn btn-sm btn-ghost" onClick={() => onRestore(f.id)} title="بازگردانی از آرشیو">
-                          ♻
+                          <IconHistory size={14} />
                         </button>
                       ) : (
                         <button className="btn btn-sm btn-ghost" onClick={() => onArchive(f.id)} title="آرشیو کردن">
-                          📦
+                          <IconArchive size={14} />
                         </button>
                       ))}
                   </td>

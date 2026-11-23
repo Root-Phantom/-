@@ -6,6 +6,17 @@ import type { FieldDef, FieldType, GeomType, Layer } from "../types";
 import {
   Confirm, Empty, ErrorBox, GEOM_LABEL, Loading, Modal, TYPE_LABEL, fa, shamsi, useToast,
 } from "../ui";
+import {
+  IconArchive,
+  IconCheck,
+  IconEdit,
+  IconHistory,
+  IconLayers,
+  IconPlus,
+  IconTable,
+  IconTools,
+  IconTrash,
+} from "../components/Icons";
 
 export default function LayerManager({
   isAdmin, onChanged,
@@ -87,8 +98,15 @@ export default function LayerManager({
       {/* فهرست لایه‌ها */}
       <div className="card page-split-side">
         <h3 style={{ justifyContent: "space-between" }}>
-          <span>🗂 لایه‌ها</span>
-          <button className="btn btn-sm btn-primary" onClick={() => setShowNewLayer(true)}>＋ لایه جدید</button>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <IconLayers size={16} /> لایه‌ها
+          </span>
+          <button className="btn btn-sm btn-primary" onClick={() => setShowNewLayer(true)}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+              <IconPlus size={13} />
+              <span>لایه جدید</span>
+            </span>
+          </button>
         </h3>
         <ErrorBox msg={error} />
         {layers.length === 0 && <Empty text="لایه‌ای وجود ندارد. شیپ‌فایل آپلود کنید یا لایه بسازید." />}
@@ -121,9 +139,14 @@ export default function LayerManager({
 
           <div className="card">
             <h3 style={{ justifyContent: "space-between" }}>
-              <span>📋 ستون‌های جدول توصیفی ({fa(fields.length)})</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                <IconTable size={16} /> ستون‌های جدول توصیفی ({fa(fields.length)})
+              </span>
               <button className="btn btn-sm btn-primary" onClick={() => setShowNewField(true)} disabled={layer.is_archived}>
-                ＋ افزودن ستون جدید
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                  <IconPlus size={13} />
+                  <span>افزودن ستون جدید</span>
+                </span>
               </button>
             </h3>
             <div className="tiny muted" style={{ marginBottom: 8 }}>
@@ -159,11 +182,13 @@ export default function LayerManager({
                           {TYPE_LABEL[f.data_type]}
                           {f.data_type === "select" && <div className="tiny muted">{f.options.join("، ")}</div>}
                         </td>
-                        <td data-label="اجباری">{f.is_required ? "✔" : ""}</td>
-                        <td data-label="جست‌وجو">{f.is_searchable ? "✔" : ""}</td>
+                        <td data-label="اجباری">{f.is_required ? <IconCheck size={14} /> : ""}</td>
+                        <td data-label="جست‌وجو">{f.is_searchable ? <IconCheck size={14} /> : ""}</td>
                         <td data-label="پیش‌فرض">{f.default_value || <span className="cell-empty">—</span>}</td>
                         <td data-label="عملیات" className="nowrap">
-                          <button className="btn btn-sm btn-ghost" onClick={() => setEditField(f)} title="ویرایش">✏</button>
+                          <button className="btn btn-sm btn-ghost" onClick={() => setEditField(f)} title="ویرایش">
+                            <IconEdit size={14} />
+                          </button>
                           {isAdmin && !f.is_system && (
                             <button
                               className="btn btn-sm btn-ghost"
@@ -181,7 +206,7 @@ export default function LayerManager({
                                 })
                               }
                             >
-                              🗑
+                              <IconTrash size={15} />
                             </button>
                           )}
                         </td>
@@ -195,7 +220,9 @@ export default function LayerManager({
 
           {isAdmin && (
             <div className="card">
-              <h3>🛠 عملیات لایه</h3>
+              <h3 style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <IconTools size={16} /> عملیات لایه
+              </h3>
               <div className="tiny muted" style={{ marginBottom: 8 }}>ایجاد: {shamsi(layer.created_at)}</div>
               <div className="row">
                 {layer.is_archived ? (
@@ -212,7 +239,7 @@ export default function LayerManager({
                       })
                     }
                   >
-                    ♻ بازگردانی از آرشیو
+                    <IconHistory size={16} /> بازگردانی از آرشیو
                   </button>
                 ) : (
                   <button
@@ -228,7 +255,7 @@ export default function LayerManager({
                       })
                     }
                   >
-                    📦 آرشیو کردن لایه
+                    <IconArchive size={16} /> آرشیو کردن لایه
                   </button>
                 )}
                 <button
@@ -247,7 +274,7 @@ export default function LayerManager({
                     })
                   }
                 >
-                  🗑 حذف کامل
+                  <IconTrash size={16} /> حذف کامل
                 </button>
               </div>
             </div>
@@ -333,7 +360,9 @@ function LayerSettings({ layer, fields, onSaved }: { layer: Layer; fields: Field
 
   return (
     <div className="card">
-      <h3>⚙ تنظیمات لایه «{layer.name}»</h3>
+      <h3 style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <IconTools size={16} /> تنظیمات لایه «{layer.name}»
+      </h3>
       <div className="row">
         <div className="field grow">
           <label>نام لایه</label>

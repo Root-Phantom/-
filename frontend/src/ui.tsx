@@ -1,5 +1,6 @@
 // ---- اجزای کوچک مشترک رابط کاربری ----
 import React, { createContext, useCallback, useContext, useState } from "react";
+import { IconEmpty } from "./components/Icons";
 
 // ---------- پنجره (مودال) ----------
 
@@ -76,15 +77,15 @@ export const Loading = ({ text = "در حال بارگذاری…" }: { text?: s
   </div>
 );
 
-export const Empty = ({ icon = "📭", text }: { icon?: string; text: string }) => (
+export const Empty = ({ icon, text }: { icon?: React.ReactNode; text: string }) => (
   <div className="empty">
-    <span className="icon">{icon}</span>
+    <span className="icon">{icon || <IconEmpty size={38} />}</span>
     {text}
   </div>
 );
 
 export const ErrorBox = ({ msg }: { msg: string | null }) =>
-  msg ? <div className="alert alert-error">⚠ {msg}</div> : null;
+  msg ? <div className="alert alert-error">{msg}</div> : null;
 
 // ---------- تأیید عملیات ----------
 

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { api } from "../api";
 import type { Role, User } from "../types";
 import { Confirm, ErrorBox, Loading, Modal, Pager, ROLE_LABEL, shamsi, useToast } from "../ui";
+import { IconEdit, IconLock, IconPlus, IconTrash } from "../components/Icons";
 
 export default function UserManager({ currentUserId }: { currentUserId: string }) {
   const toast = useToast();
@@ -50,7 +51,12 @@ export default function UserManager({ currentUserId }: { currentUserId: string }
             {roles.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
           </select>
           <div className="grow" />
-          <button className="btn btn-primary" onClick={() => setEditing("new")}>＋ تعریف کاربر جدید</button>
+          <button className="btn btn-primary" onClick={() => setEditing("new")}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <IconPlus size={15} />
+              <span>تعریف کاربر جدید</span>
+            </span>
+          </button>
         </div>
         <ErrorBox msg={error} />
         {!items ? <Loading /> : (
@@ -69,13 +75,17 @@ export default function UserManager({ currentUserId }: { currentUserId: string }
                     <td data-label="وضعیت"><span className={`badge ${u.is_active ? "badge-success" : "badge-muted"}`}>{u.is_active ? "فعال" : "غیرفعال"}</span></td>
                     <td data-label="آخرین ورود" className="tiny">{shamsi(u.last_login_at)}</td>
                     <td data-label="عملیات" className="nowrap">
-                      <button className="btn btn-sm btn-ghost" onClick={() => setEditing(u)} title="ویرایش">✏</button>
+                      <button className="btn btn-sm btn-ghost" onClick={() => setEditing(u)} title="ویرایش">
+                        <IconEdit size={15} />
+                      </button>
                       {u.id !== currentUserId && (
                         <>
                           <button className="btn btn-sm btn-ghost" onClick={() => toggleActive(u)} title={u.is_active ? "غیرفعال کردن" : "فعال کردن"}>
-                            {u.is_active ? "⏸" : "▶"}
+                            {u.is_active ? "غیرفعال" : "فعال"}
                           </button>
-                          <button className="btn btn-sm btn-ghost" onClick={() => setToDelete(u)} title="حذف">🗑</button>
+                          <button className="btn btn-sm btn-ghost" onClick={() => setToDelete(u)} title="حذف">
+                            <IconTrash size={15} />
+                          </button>
                         </>
                       )}
                     </td>
@@ -91,7 +101,9 @@ export default function UserManager({ currentUserId }: { currentUserId: string }
       </div>
 
       <div className="card">
-        <h3>🔐 سطوح دسترسی</h3>
+        <h3 style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <IconLock size={16} /> سطوح دسترسی
+        </h3>
         {roles.map((r) => (
           <div key={r.value} style={{ marginBottom: 4 }}><strong>{r.label}:</strong> <span className="muted">{r.description}</span></div>
         ))}

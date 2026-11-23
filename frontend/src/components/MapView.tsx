@@ -10,6 +10,17 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { FieldDef, GeoJsonGeometry, Layer as LayerT } from "../types";
 import MapSearch from "./MapSearch";
+import {
+  IconBlank,
+  IconClose,
+  IconEdit,
+  IconLine,
+  IconMap,
+  IconPin,
+  IconPolygon,
+  IconSatellite,
+  IconSearch,
+} from "./Icons";
 
 // مسیر آیکون نشانگر پیش‌فرض پس از بسته‌بندی Vite درست تنظیم می‌شود
 delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
@@ -507,21 +518,21 @@ export default function MapView(props: MapViewProps) {
           onClick={() => setBaseName("osm")}
           title="نقشه خیابان‌ها"
         >
-          🗺
+          <IconMap size={18} />
         </button>
         <button
           className={baseName === "satellite" ? "active" : ""}
           onClick={() => setBaseName("satellite")}
           title="تصویر ماهواره‌ای"
         >
-          🛰
+          <IconSatellite size={18} />
         </button>
         <button
           className={baseName === "blank" ? "active" : ""}
           onClick={() => setBaseName("blank")}
           title="بدون نقشه پایه"
         >
-          ⬜
+          <IconBlank size={18} />
         </button>
 
         {canEdit && activeLayerId && (
@@ -533,7 +544,7 @@ export default function MapView(props: MapViewProps) {
                 onClick={() => onDrawModeChange(drawMode === "point" ? "none" : "point")}
                 title="رسم نقطه"
               >
-                📍
+                <IconPin size={18} />
               </button>
             )}
             {(geomOfActive === "linestring" || geomOfActive === "mixed") && (
@@ -542,7 +553,7 @@ export default function MapView(props: MapViewProps) {
                 onClick={() => onDrawModeChange(drawMode === "line" ? "none" : "line")}
                 title="رسم خط / معبر"
               >
-                ╱
+                <IconLine size={18} />
               </button>
             )}
             {(geomOfActive === "polygon" || geomOfActive === "mixed") && (
@@ -551,12 +562,12 @@ export default function MapView(props: MapViewProps) {
                 onClick={() => onDrawModeChange(drawMode === "polygon" ? "none" : "polygon")}
                 title="رسم چندضلعی"
               >
-                ⬠
+                <IconPolygon size={18} />
               </button>
             )}
             {selectedId && (
               <button onClick={startGeometryEdit} title="ویرایش هندسه عارضه انتخاب‌شده">
-                ✏
+                <IconEdit size={18} />
               </button>
             )}
           </>
@@ -568,7 +579,7 @@ export default function MapView(props: MapViewProps) {
           onClick={spatialActive ? clearSpatialFilter : beginSpatialFilter}
           title={spatialActive ? "حذف فیلتر مکانی" : "جست‌وجو در محدوده ترسیمی"}
         >
-          {spatialActive ? "✕" : "🔍"}
+          {spatialActive ? <IconClose size={18} /> : <IconSearch size={18} />}
         </button>
       </div>
 

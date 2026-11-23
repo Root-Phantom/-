@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "../api";
 import type { Operator, OperatorInfo, SearchCondition, SearchField } from "../types";
 import { TYPE_LABEL, fa } from "../ui";
+import { IconClose, IconExport, IconFilter, IconPlus, IconSearch, IconTable, IconTools } from "./Icons";
 
 const NO_VALUE_OPS: Operator[] = ["is_empty", "is_not_empty"];
 const TWO_VALUE_OPS: Operator[] = ["between"];
@@ -101,7 +102,9 @@ export default function SearchPanel(p: SearchPanelProps) {
   return (
     <>
       <div className="card">
-        <h3>🔎 جست‌وجوی سریع</h3>
+        <h3 style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <IconSearch size={16} /> جست‌وجوی سریع
+        </h3>
         <div className="field">
           <input
             className="input"
@@ -117,7 +120,9 @@ export default function SearchPanel(p: SearchPanelProps) {
       </div>
 
       <div className="card">
-        <h3>⚙ جست‌وجوی پیشرفته</h3>
+        <h3 style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <IconTools size={16} /> جست‌وجوی پیشرفته
+        </h3>
 
         {conditions.length > 1 && (
           <div className="field">
@@ -214,14 +219,17 @@ export default function SearchPanel(p: SearchPanelProps) {
               )}
 
               <button className="btn btn-sm btn-ghost" onClick={() => remove(i)} title="حذف شرط">
-                ✕
+                <IconClose size={13} />
               </button>
             </div>
           );
         })}
 
         <button className="btn btn-sm btn-block" onClick={addCondition} disabled={fields.length === 0}>
-          ＋ افزودن شرط
+          <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
+            <IconPlus size={13} />
+            <span>افزودن شرط</span>
+          </span>
         </button>
 
         {canSeeArchive && (
@@ -236,8 +244,9 @@ export default function SearchPanel(p: SearchPanelProps) {
         )}
 
         {hasSpatial && (
-          <div className="alert alert-warn tiny" style={{ marginTop: 10, marginBottom: 0 }}>
-            🔍 فیلتر مکانی فعال است — فقط عوارض داخل محدوده ترسیمی نمایش داده می‌شوند.
+          <div className="alert alert-warn tiny" style={{ marginTop: 10, marginBottom: 0, display: "flex", alignItems: "center", gap: 6 }}>
+            <IconFilter size={15} />
+            <span>فیلتر مکانی فعال است — فقط عوارض داخل محدوده ترسیمی نمایش داده می‌شوند.</span>
           </div>
         )}
 
@@ -256,7 +265,9 @@ export default function SearchPanel(p: SearchPanelProps) {
       </div>
 
       <div className="card">
-        <h3>📤 خروجی جدول توصیفی</h3>
+        <h3 style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <IconExport size={16} /> خروجی جدول توصیفی
+        </h3>
         <div className="row">
           <button className="btn btn-sm grow" onClick={onExportCsv} disabled={!layerId}>
             CSV (اکسل)
@@ -272,7 +283,9 @@ export default function SearchPanel(p: SearchPanelProps) {
 
       {fields.length > 0 && (
         <div className="card">
-          <h3>📋 ستون‌های این لایه</h3>
+          <h3 style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <IconTable size={16} /> ستون‌های این لایه
+          </h3>
           <div className="tiny">
             {fields
               .filter((f) => !f.key.startsWith("__"))

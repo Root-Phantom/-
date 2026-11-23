@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { api } from "../api";
 import type { AuditEntry } from "../types";
 import { ErrorBox, Loading, Modal, Pager, fa, shamsi, useToast } from "../ui";
+import { IconChart, IconExport, IconUsers } from "../components/Icons";
 
 type Summary = Awaited<ReturnType<typeof api.auditSummary>>;
 
@@ -55,7 +56,9 @@ export default function AuditLogPage() {
         <div className="row" style={{ alignItems: "stretch", marginBottom: 12 }}>
           <div className="card grow" style={{ marginBottom: 0, minWidth: 260 }}>
             <h3 style={{ justifyContent: "space-between" }}>
-              <span>👥 فعال‌ترین کاربران</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                <IconUsers size={16} /> فعال‌ترین کاربران
+              </span>
               <select className="select" style={{ width: 120 }} value={days} onChange={(e) => setDays(Number(e.target.value))}>
                 <option value={1}>۲۴ ساعت اخیر</option>
                 <option value={7}>۷ روز اخیر</option>
@@ -73,7 +76,9 @@ export default function AuditLogPage() {
             ))}
           </div>
           <div className="card grow" style={{ marginBottom: 0, minWidth: 260 }}>
-            <h3>📊 پرتکرارترین رویدادها</h3>
+            <h3 style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <IconChart size={16} /> پرتکرارترین رویدادها
+            </h3>
             {summary.by_action.slice(0, 8).map((a) => (
               <div className="bar-row" key={a.action}>
                 <span className="name">{a.label}</span>
@@ -118,7 +123,7 @@ export default function AuditLogPage() {
             className="btn"
             onClick={() => api.exportAudit(params()).catch((e) => toast(e.message, "err"))}
           >
-            📤 خروجی CSV
+            <IconExport size={16} /> خروجی CSV
           </button>
         </div>
         <ErrorBox msg={error} />

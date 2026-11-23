@@ -14,6 +14,18 @@ import { ChangePasswordModal, LoginModal } from "./components/LoginModal";
 import MapView, { type DrawMode } from "./components/MapView";
 import SearchPanel from "./components/SearchPanel";
 import SuggestModal from "./components/SuggestModal";
+import {
+  VeysianLogo,
+  IconMap,
+  IconLayers,
+  IconUpload,
+  IconLightbulb,
+  IconUsers,
+  IconAudit,
+  IconKey,
+  IconMenu,
+  IconRefresh,
+} from "./components/Icons";
 import type {
   AppInfo, Feature, FieldDef, GeoJsonGeometry, Layer, OperatorInfo,
   SearchCondition, SearchField, SearchRequest, Session,
@@ -333,23 +345,25 @@ export default function App() {
   if (!session) return <Loading text="در حال اتصال به سامانه…" />;
 
   const activeLayer = layers.find((l) => l.id === activeLayerId);
-  const tabs: { id: Tab; label: string; show: boolean }[] = [
-    { id: "map", label: "🗺 نقشه و جدول توصیفی", show: true },
-    { id: "layers", label: "🗂 لایه‌ها و ستون‌ها", show: canEdit },
-    { id: "upload", label: "⬆ آپلود شیپ‌فایل", show: canEdit },
-    { id: "suggestions", label: `💡 پیشنهادها${pendingCount ? ` (${fa(pendingCount)})` : ""}`, show: canEdit },
-    { id: "users", label: "👥 کاربران", show: isAdmin },
-    { id: "audit", label: "📜 لاگ سامانه", show: isAdmin },
+  const tabs: { id: Tab; label: string; icon: React.ReactNode; show: boolean }[] = [
+    { id: "map", label: "نقشه و جدول توصیفی", icon: <IconMap size={16} />, show: true },
+    { id: "layers", label: "لایه‌ها و ستون‌ها", icon: <IconLayers size={16} />, show: canEdit },
+    { id: "upload", label: "آپلود شیپ‌فایل", icon: <IconUpload size={16} />, show: canEdit },
+    { id: "suggestions", label: `پیشنهادها${pendingCount ? ` (${fa(pendingCount)})` : ""}`, icon: <IconLightbulb size={16} />, show: canEdit },
+    { id: "users", label: "کاربران", icon: <IconUsers size={16} />, show: isAdmin },
+    { id: "audit", label: "لاگ سامانه", icon: <IconAudit size={16} />, show: isAdmin },
   ];
 
   return (
     <div className="app">
       <header className="header">
         {tab === "map" && (
-          <button className="btn btn-sm menu-toggle" onClick={() => setSidebarOpen((o) => !o)} aria-label="لایه‌ها و جست‌وجو" aria-expanded={sidebarOpen}>☰</button>
+          <button className="btn btn-sm menu-toggle" onClick={() => setSidebarOpen((o) => !o)} aria-label="لایه‌ها و جست‌وجو" aria-expanded={sidebarOpen}>
+            <IconMenu size={18} />
+          </button>
         )}
         <div className="brand">
-          <div className="brand-mark">🛣</div>
+          <VeysianLogo size={34} className="brand-logo" />
           <div className="brand-text">
             <h1>{info?.app_name || "سامانه مدیریت معابر شهر ویسیان"}</h1>
             <span>شهرداری ویسیان</span>
@@ -357,7 +371,10 @@ export default function App() {
         </div>
         {tabs.filter((t) => t.show).length > 1 && <nav>
           {tabs.filter((t) => t.show).map((t) => (
-            <button key={t.id} className={tab === t.id ? "active" : ""} onClick={() => { setTab(t.id); setSidebarOpen(false); }}>{t.label}</button>
+            <button key={t.id} className={tab === t.id ? "active" : ""} onClick={() => { setTab(t.id); setSidebarOpen(false); }}>
+              {t.icon}
+              <span>{t.label}</span>
+            </button>
           ))}
         </nav>}
         <div className="spacer" />
@@ -368,7 +385,9 @@ export default function App() {
                 <strong>{session.user.full_name || session.user.username}</strong>
                 <small>{ROLE_LABEL[session.user.role]}</small>
               </div>
-              <button className="btn btn-sm btn-ghost" onClick={() => setShowPw("normal")} title="تغییر گذرواژه">🔑</button>
+              <button className="btn btn-sm btn-ghost" onClick={() => setShowPw("normal")} title="تغییر گذرواژه">
+                <IconKey size={16} />
+              </button>
               <button className="btn btn-sm" onClick={doLogout}>خروج</button>
             </>
           ) : (
@@ -390,7 +409,7 @@ export default function App() {
                 <button className="x-btn" onClick={() => setSidebarOpen(false)} aria-label="بستن">×</button>
               </div>
               <div className="card">
-                <h3>🗂 لایه‌ها</h3>
+                <h3><IconLayers size={16} /> لایه‌ها</h3>
                 {layers.length === 0 && (
                   <div className="tiny muted">
                     لایه‌ای وجود ندارد.{canEdit && <> از بخش <a href="#" onClick={(e) => { e.preventDefault(); setTab("upload"); }}>آپلود شیپ‌فایل</a> شروع کنید.</>}
@@ -493,7 +512,9 @@ export default function App() {
                     {selectedId && (
                       <button className="btn btn-sm btn-ghost" onClick={() => setSelectedId(null)}>لغو انتخاب روی نقشه</button>
                     )}
-                    <button className="btn btn-sm" onClick={refresh} title="بارگذاری دوباره">⟳</button>
+                    <button className="btn btn-sm" onClick={refresh} title="بارگذاری دوباره">
+                      <IconRefresh size={14} />
+                    </button>
                   </div>
                   <AttributeTable
                     features={features}

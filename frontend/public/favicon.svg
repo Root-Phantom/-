@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+  <defs>
+    <linearGradient id="favGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <!-- Background Crest Shield -->
+  <path d="M20 2 C28 2, 36 5, 36 12 C36 24, 28 34, 20 38 C12 34, 4 24, 4 12 C4 5, 12 2, 20 2 Z" fill="url(#favGrad)" stroke="#38bdf8" stroke-width="1.5" />
+  <!-- Road perspective -->
+  <path d="M14 32 L17 19 L23 19 L26 32 Z" fill="#0f172a" opacity="0.45" />
+  <!-- Road dashed line -->
+  <line x1="20" y1="20" x2="20" y2="30" stroke="#facc15" stroke-width="1.4" stroke-dasharray="2.5 1.5" />
+  <!-- Dome / Arch -->
+  <path d="M15 19 C15 13.5, 25 13.5, 25 19" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" />
+  <!-- Pin Marker -->
+  <path d="M20 7 C18.3 7 17 8.3 17 10 C17 12.5 20 15 20 15 C20 15 23 12.5 23 10 C23 8.3 21.7 7 20 7 Z" fill="#ef4444" stroke="#ffffff" stroke-width="0.8" />
+  <circle cx="20" cy="10" r="1.1" fill="#ffffff" />
+</svg>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "../api";
 import type { ImportJob, Layer, ShapefilePreview } from "../types";
 import { ErrorBox, GEOM_LABEL, TYPE_LABEL, cellText, fa, shamsi, useToast } from "../ui";
+import { IconCheck, IconHistory } from "../components/Icons";
 
 export default function UploadWizard({ onImported }: { onImported: (layerId: string) => void }) {
   const toast = useToast();
@@ -180,7 +181,10 @@ export default function UploadWizard({ onImported }: { onImported: (layerId: str
 
         {step === 3 && result && (
           <>
-            <div className="alert alert-success">✔ {result.detail}</div>
+            <div className="alert alert-success" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <IconCheck size={16} />
+              <span>{result.detail}</span>
+            </div>
             {result.new_fields.length > 0 && (
               <p className="tiny muted">ستون‌های ساخته‌شده: {result.new_fields.join("، ")}</p>
             )}
@@ -193,7 +197,9 @@ export default function UploadWizard({ onImported }: { onImported: (layerId: str
       </div>
 
       <div className="card" style={{ maxWidth: 980, margin: "0 auto" }}>
-        <h3>🕘 سابقه درون‌ریزی‌ها</h3>
+        <h3 style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <IconHistory size={16} /> سابقه درون‌ریزی‌ها
+        </h3>
         {jobs.length === 0 ? (
           <div className="muted tiny">سابقه‌ای ثبت نشده است.</div>
         ) : (

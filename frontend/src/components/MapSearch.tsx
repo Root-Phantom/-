@@ -3,6 +3,7 @@ import L from "leaflet";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { FieldDef, Layer as LayerT } from "../types";
+import { IconClose, IconCrosshair, IconPin, IconSearch, IconTable } from "./Icons";
 
 export interface MapSearchProps {
   map: React.RefObject<L.Map | null>;
@@ -307,8 +308,8 @@ export default function MapSearch({ map, layers, visibleLayerIds, layerData, fie
   return (
     <div className="map-overlay map-search" ref={boxRef}>
       <div className="map-search-row">
-        <span className="map-search-icon" aria-hidden>
-          🔎
+        <span className="map-search-icon" aria-hidden style={{ display: "grid", placeItems: "center" }}>
+          <IconSearch size={16} />
         </span>
         <input
           ref={inputRef}
@@ -336,7 +337,7 @@ export default function MapSearch({ map, layers, visibleLayerIds, layerData, fie
               inputRef.current?.focus();
             }}
           >
-            ✕
+            <IconClose size={13} />
           </button>
         )}
       </div>
@@ -357,8 +358,8 @@ export default function MapSearch({ map, layers, visibleLayerIds, layerData, fie
                   onMouseEnter={() => setCursor(i)}
                   onClick={() => pick(h)}
                 >
-                  <span className="map-search-kind" aria-hidden>
-                    {h.kind === "feature" ? "▤" : h.kind === "place" ? "📍" : "⌖"}
+                  <span className="map-search-kind" aria-hidden style={{ display: "grid", placeItems: "center" }}>
+                    {h.kind === "feature" ? <IconTable size={14} /> : h.kind === "place" ? <IconPin size={14} /> : <IconCrosshair size={14} />}
                   </span>
                   <span className="map-search-text">
                     {h.kind === "coord" ? (

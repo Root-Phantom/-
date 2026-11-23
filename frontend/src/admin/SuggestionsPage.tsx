@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { api } from "../api";
 import type { FieldDef, Suggestion } from "../types";
 import { Empty, ErrorBox, Loading, Modal, Pager, STATUS_LABEL, fa, shamsi, useToast } from "../ui";
+import { IconCheck, IconClose, IconLightbulb, IconMap } from "../components/Icons";
 
 export default function SuggestionsPage({ onChanged, onShowFeature }: { onChanged: () => void; onShowFeature: (id: string) => void }) {
   const toast = useToast();
@@ -47,7 +48,7 @@ export default function SuggestionsPage({ onChanged, onShowFeature }: { onChange
       <div className="card">
         <ErrorBox msg={error} />
         {!items ? <Loading /> : items.length === 0 ? (
-          <Empty icon="💡" text={`پیشنهادی با وضعیت «${STATUS_LABEL[status]}» وجود ندارد.`} />
+          <Empty icon={<IconLightbulb size={36} />} text={`پیشنهادی با وضعیت «${STATUS_LABEL[status]}» وجود ندارد.`} />
         ) : (
           <div style={{ overflowX: "auto" }}>
             <table className="grid stack-mobile">
@@ -67,7 +68,11 @@ export default function SuggestionsPage({ onChanged, onShowFeature }: { onChange
                       {s.reviewed_by_name && <div className="tiny muted">{s.reviewed_by_name}</div>}
                     </td>
                     <td data-label="عملیات" className="nowrap">
-                      {s.feature_id && <button className="btn btn-sm btn-ghost" onClick={() => onShowFeature(s.feature_id!)} title="نمایش روی نقشه">🗺</button>}
+                      {s.feature_id && (
+                        <button className="btn btn-sm btn-ghost" onClick={() => onShowFeature(s.feature_id!)} title="نمایش روی نقشه">
+                          <IconMap size={16} />
+                        </button>
+                      )}
                       {s.status === "pending" && <button className="btn btn-sm btn-primary" onClick={() => setReview(s)}>بررسی</button>}
                     </td>
                   </tr>
@@ -135,8 +140,18 @@ function ReviewModal({ s, onClose, onDone }: { s: Suggestion; onClose: () => voi
       onClose={onClose}
       footer={
         <>
-          <button className="btn btn-primary" disabled={busy} onClick={() => act("approved")}>✔ تأیید{applyTo ? " و اعمال نام" : ""}</button>
-          <button className="btn btn-danger" disabled={busy} onClick={() => act("rejected")}>✕ رد</button>
+          <button className="btn btn-primary" disabled={busy} onClick={() => act("approved")}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+              <IconCheck size={14} />
+              <span>تأیید{applyTo ? " و اعمال نام" : ""}</span>
+            </span>
+          </button>
+          <button className="btn btn-danger" disabled={busy} onClick={() => act("rejected")}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+              <IconClose size={14} />
+              <span>رد</span>
+            </span>
+          </button>
           <button className="btn" onClick={onClose}>انصراف</button>
         </>
       }

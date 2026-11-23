@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "../api";
 import type { FieldDef, Revision } from "../types";
 import { Empty, ErrorBox, Loading, Modal, cellText, fa, shamsi } from "../ui";
+import { IconNote } from "./Icons";
 
 const ACTION: Record<string, { label: string; cls: string }> = {
   create: { label: "ایجاد", cls: "badge-success" },
@@ -59,7 +60,11 @@ export default function HistoryModal({
                       </div>
                     ))}
                   {r.geometry_changed && <div>هندسه روی نقشه تغییر کرد.</div>}
-                  {r.note && <div>📝 {r.note}</div>}
+                  {r.note && (
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                      <IconNote size={14} /> {r.note}
+                    </div>
+                  )}
                 </div>
               </div>
             );
