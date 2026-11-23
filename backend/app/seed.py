@@ -47,8 +47,93 @@ def create_first_admin() -> None:
         db.close()
 
 
+def seed_default_layer() -> None:
+    """در صورتی که هیچ لایه‌ای در سامانه نباشد، شیپ‌فایل ویسیان را خودکار درون‌ریزی می‌کند."""
+    import json
+    from pathlib import Path
+    from sqlalchemy import func
+    from .models import Feature, FieldDef, FieldType, GeomType, Layer
+    from .services.shapefile import _transformer, detect_encoding, detect_srid, iter_records, read_shapefile
+
+    db: Session = SessionLocal()
+    try:
+        if db.query(Layer).count() > 0:
+            return
+
+        admin = db.query(User).filter(User.role == Role.ADMIN).first()
+        if not admin:
+            return
+
+        candidates = [
+            settings.BASE_DIR.parent / "veysian_final" / "veysian99.shp",
+            settings.BASE_DIR / "veysian_final" / "veysian99.shp",
+            Path("/app/veysian_final/veysian99.shp"),
+        ]
+        shp_path = None
+        for c in candidates:
+            if c.exists():
+                shp_path = c
+                break
+        if not shp_path:
+            return
+
+        enc = detect_encoding(shp_path) or "utf-8"
+        srid = detect_srid(shp_path) or 4326
+
+        reader, enc, geom_type, count, field_info = read_shapefile(shp_path, encoding=enc)
+
+        layer = Layer(
+            name="معابر شهر ویسیان",
+            slug="veysian-streets",
+            description="شیپ‌فایل معابر و خیابان‌های شهر ویسیان",
+            geom_type=GeomType.LINESTRING,
+            srid=4326,
+            style={"color": "#1d4ed8", "weight": 4},
+            created_by_id=admin.id,
+        )
+        db.add(layer)
+        db.flush()
+
+        for idx, f in enumerate(field_info):
+            fd = FieldDef(
+                layer_id=layer.id,
+                key=f["key"],
+                label=f["label"] or f["source_name"],
+                data_type=FieldType(f["data_type"]),
+                is_searchable=True,
+                sort_order=idx + 1,
+            )
+            db.add(fd)
+            if f["key"] == "name":
+                layer.label_field = "name"
+
+        db.flush()
+
+        trans = _transformer(int(srid))
+        for attrs, geo in iter_records(reader, field_info, trans):
+            feat = Feature(
+                layer_id=layer.id,
+                attributes=attrs,
+                created_by_id=admin.id,
+                updated_by_id=admin.id,
+                version=1,
+            )
+            if geo:
+                feat.geom = func.ST_SetSRID(func.ST_GeomFromGeoJSON(json.dumps(geo)), 4326)
+            db.add(feat)
+
+        db.commit()
+        log.info("شیپ‌فایل پیش‌فرض ویسیان درون‌ریزی شد: %d معبر", count)
+    except Exception as e:
+        db.rollback()
+        log.warning("درون‌ریزی خودکار شیپ‌فایل ویسیان انجام نشد: %s", e)
+    finally:
+        db.close()
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     init_db()
     create_first_admin()
+    seed_default_layer()
     print("پایگاه داده آماده شد.")

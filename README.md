@@ -69,8 +69,6 @@ cd frontend
 npm install && npm run dev    # http://localhost:8006
 ```
 
-مستندات API: `http://localhost:8005/api/docs`
-
 ## ساختار پروژه
 
 ```

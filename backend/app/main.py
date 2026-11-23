@@ -11,7 +11,7 @@ from fastapi.staticfiles import StaticFiles
 
 from .config import BASE_DIR, settings
 from .routers import audit, auth, export, features, layers, search, suggestions, upload, users
-from .seed import create_first_admin, init_db
+from .seed import create_first_admin, init_db, seed_default_layer
 
 logging.basicConfig(
     level=logging.INFO,
@@ -24,6 +24,7 @@ async def lifespan(_: FastAPI):
     log.info("راه‌اندازی %s", settings.APP_NAME)
     init_db()
     create_first_admin()
+    seed_default_layer()
     yield
 
 
@@ -32,9 +33,9 @@ app = FastAPI(
     title=settings.APP_NAME,
     description="سامانه ثبت، نام‌گذاری و مدیریت معابر و خیابان‌های شهر ویسیان",
     version="1.0.0",
-    docs_url="/api/docs",
+    docs_url=None,
     redoc_url=None,
-    openapi_url="/api/openapi.json",
+    openapi_url=None,
 )
 
 app.add_middleware(GZipMiddleware, minimum_size=1000)
@@ -107,7 +108,7 @@ if FRONTEND_DIR.exists():
     @app.get("/{full_path:path}", include_in_schema=False)
     def spa(full_path: str):
         """همه مسیرهای غیر API به index.html هدایت می‌شوند (مسیریابی سمت کلاینت)."""
-        if full_path.startswith("api/"):
+        if full_path.startswith("api/") or full_path in ("doc", "docs", "doc/", "docs/"):
             return JSONResponse(status_code=404, content={"detail": "مسیر یافت نشد."})
         candidate = (FRONTEND_DIR / full_path).resolve()
         # جلوگیری از خروج از پوشه dist با «../» (مثلاً برای خواندن backend/.env)

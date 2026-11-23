@@ -24,6 +24,7 @@ COPY backend/requirements.txt ./
 RUN pip install -r requirements.txt
 
 COPY backend/app ./app
+COPY veysian_final /app/veysian_final
 
 # رابط کاربری باید کنار backend/ (یعنی در ../frontend/dist) قرار بگیرد؛ main.py همین مسیر را سرو می‌کند
 COPY --from=frontend-build /frontend/dist /app/frontend/dist
