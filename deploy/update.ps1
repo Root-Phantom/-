@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Applies a new version: backup, stop service, install packages, build frontend, start service.
 
@@ -8,11 +8,11 @@
 
 .EXAMPLE
     .\update.ps1
-    .\update.ps1 -WheelsDir C:\PoldokhtarGIS\wheels -SkipFrontendBuild
+    .\update.ps1 -WheelsDir C:\VeysianGIS\wheels -SkipFrontendBuild
 #>
 [CmdletBinding()]
 param(
-    [string] $ServiceName = "PoldokhtarGIS",
+    [string] $ServiceName = "VeysianGIS",
     [string] $WheelsDir = "",
     [switch] $SkipBackup,
     [switch] $SkipFrontendBuild

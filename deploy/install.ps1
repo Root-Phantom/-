@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Installs the Poldokhtar Street Management System (backend + database + frontend) on Windows Server.
+    Installs the Veysian Street Management System (backend + database + frontend) on Windows Server.
 
 .DESCRIPTION
     1. Checks Python and PostgreSQL/PostGIS
@@ -14,11 +14,11 @@
     The script is idempotent: it can be run again safely.
 
 .EXAMPLE
-    .\install.ps1 -PostgresPassword "PgSuper@123" -DbPassword "PolDb@2025" -AdminPassword "Admin@2025"
+    .\install.ps1 -PostgresPassword "PgSuper@123" -DbPassword "VeysianDb@2026" -AdminPassword "Admin@2026"
 
 .EXAMPLE
     # Offline server with pre-downloaded wheels, behind IIS
-    .\install.ps1 -PostgresPassword "..." -DbPassword "..." -AdminPassword "..." -WheelsDir C:\PoldokhtarGIS\wheels -BehindIIS
+    .\install.ps1 -PostgresPassword "..." -DbPassword "..." -AdminPassword "..." -WheelsDir C:\VeysianGIS\wheels -BehindIIS
 #>
 [CmdletBinding()]
 param(
@@ -29,8 +29,8 @@ param(
     [string] $AdminFullName = "مدیر سامانه",
     [string] $DbHost = "localhost",
     [int]    $DbPort = 5432,
-    [string] $DbName = "poldokhtar_gis",
-    [string] $DbUser = "pol_user",
+    [string] $DbName = "veysian_gis",
+    [string] $DbUser = "veysian_user",
     [int]    $AppPort = 8005,
     [string] $PythonExe = "",
     [string] $PgBin = "",
@@ -62,7 +62,7 @@ if ($AdminPassword.Length -lt 8 -or $AdminPassword -notmatch '\d' -or $AdminPass
     throw "AdminPassword must be at least 8 characters and contain letters and digits."
 }
 if ($Root -match '[^\x00-\x7F]' -or $Root -match ' ') {
-    Warn "Install path '$Root' contains spaces or non-ASCII characters. C:\PoldokhtarGIS is recommended."
+    Warn "Install path '$Root' contains spaces or non-ASCII characters. C:\VeysianGIS is recommended."
 }
 
 # ------------------------------------------------------------------ Python
@@ -240,7 +240,7 @@ if (-not (Test-Path $dist)) { throw "frontend\dist\index.html was not produced."
 # ------------------------------------------------------------------ firewall
 if (-not $BehindIIS) {
     Step "Opening firewall port $AppPort"
-    $ruleName = "PoldokhtarGIS-HTTP-$AppPort"
+    $ruleName = "VeysianGIS-HTTP-$AppPort"
     if (-not (Get-NetFirewallRule -DisplayName $ruleName -ErrorAction SilentlyContinue)) {
         New-NetFirewallRule -DisplayName $ruleName -Direction Inbound -Protocol TCP -LocalPort $AppPort -Action Allow | Out-Null
         Ok "Firewall rule '$ruleName' created"

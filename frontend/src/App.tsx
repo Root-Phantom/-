@@ -351,8 +351,8 @@ export default function App() {
         <div className="brand">
           <div className="brand-mark">🛣</div>
           <div className="brand-text">
-            <h1>{info?.app_name || "سامانه مدیریت معابر شهر پلدختر"}</h1>
-            <span>شهرداری پلدختر</span>
+            <h1>{info?.app_name || "سامانه مدیریت معابر شهر ویسیان"}</h1>
+            <span>شهرداری ویسیان</span>
           </div>
         </div>
         {tabs.filter((t) => t.show).length > 1 && <nav>
@@ -465,8 +465,8 @@ export default function App() {
                     highlightIds={highlightIds}
                     canEdit={canEdit}
                     canSuggest={Boolean(perms?.suggest)}
-                    center={info?.default_center || [33.143, 47.7172]}
-                    zoom={info?.default_zoom || 14}
+                    center={info?.default_center || [33.4863, 48.0312]}
+                    zoom={info?.default_zoom || 15}
                     drawMode={drawMode}
                     onDrawModeChange={setDrawMode}
                     onSelect={setSelectedId}

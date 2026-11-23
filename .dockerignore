@@ -22,6 +22,7 @@ frontend/tsconfig.tsbuildinfo
 # سایر موارد غیرلازم برای ایمیج
 dist-packages/
 _review_snapshot.tgz
-pol_final/
+veysian_final/
+*.zip
 docs/
 deploy/

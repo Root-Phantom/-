@@ -12,7 +12,7 @@
 #>
 [CmdletBinding()]
 param(
-    [string] $ServiceName = "PoldokhtarGIS",
+    [string] $ServiceName = "VeysianGIS",
     [int]    $Port = 8005,
     [string] $BindAddress = "0.0.0.0",
     [int]    $Workers = 2,
@@ -53,8 +53,8 @@ if (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) {
 Nssm set $ServiceName Application $VenvPy
 Nssm set $ServiceName AppParameters "-m uvicorn app.main:app --host $BindAddress --port $Port --workers $Workers"
 Nssm set $ServiceName AppDirectory $Backend
-Nssm set $ServiceName DisplayName "Poldokhtar Street Management System"
-Nssm set $ServiceName Description "Poldokhtar municipality streets GIS (FastAPI + PostGIS)"
+Nssm set $ServiceName DisplayName "Veysian Street Management System"
+Nssm set $ServiceName Description "Veysian municipality streets GIS (FastAPI + PostGIS)"
 Nssm set $ServiceName Start SERVICE_AUTO_START
 Nssm set $ServiceName AppEnvironmentExtra "PYTHONUTF8=1" "PYTHONIOENCODING=utf-8"
 Nssm set $ServiceName AppStdout (Join-Path $LogDir "service.log")

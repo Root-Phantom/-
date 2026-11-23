@@ -1,6 +1,6 @@
 # راهنمای استقرار سامانه با Docker روی اوبونتو
 
-این راهنما استقرار سامانه مدیریت معابر شهر پلدختر را با **Docker و Docker Compose** روی **Ubuntu Server 22.04 / 24.04** شرح می‌دهد. در این روش نیازی به نصب دستی Python، Node.js یا PostgreSQL روی سرور نیست؛ همه چیز داخل کانتینر اجرا می‌شود.
+این راهنما استقرار سامانه مدیریت معابر شهر ویسیان را با **Docker و Docker Compose** روی **Ubuntu Server 22.04 / 24.04** شرح می‌دهد. در این روش نیازی به نصب دستی Python، Node.js یا PostgreSQL روی سرور نیست؛ همه چیز داخل کانتینر اجرا می‌شود.
 
 ---
 
@@ -76,16 +76,16 @@ docker compose version
 
 ## 2. انتقال فایل‌ها به سرور
 
-کل پوشه پروژه را به مسیری مثل `/opt/poldokhtar-gis` روی سرور منتقل کنید (با `git clone`، `scp` یا `rsync`). پوشه‌های `backend/.venv`، `frontend/node_modules` و `frontend/dist` لازم نیست منتقل شوند؛ داخل ایمیج ساخته می‌شوند.
+کل پوشه پروژه را به مسیری مثل `/opt/veysian-gis` روی سرور منتقل کنید (با `git clone`، `scp` یا `rsync`). پوشه‌های `backend/.venv`، `frontend/node_modules` و `frontend/dist` لازم نیست منتقل شوند؛ داخل ایمیج ساخته می‌شوند.
 
 ```bash
-sudo mkdir -p /opt/poldokhtar-gis
-sudo chown "$USER" /opt/poldokhtar-gis
+sudo mkdir -p /opt/veysian-gis
+sudo chown "$USER" /opt/veysian-gis
 # مثال با rsync از رایانه توسعه:
 #   rsync -avz --exclude 'frontend/node_modules' --exclude 'frontend/dist' \
 #         --exclude 'backend/.venv' --exclude 'backend/.env' --exclude '.git' \
-#         ./ user@server:/opt/poldokhtar-gis/
-cd /opt/poldokhtar-gis
+#         ./ user@server:/opt/veysian-gis/
+cd /opt/veysian-gis
 ```
 
 ---
@@ -161,7 +161,7 @@ sudo ufw status
 
 ## 6. نخستین ورود و درون‌ریزی شیپ‌فایل
 
-مطابق [docs/DEPLOY.md](DEPLOY.md#10-نخستین-ورود-و-درونریزی-شیپفایل-پلدختر) با کاربر `admin` و گذرواژه‌ای که در `FIRST_ADMIN_PASSWORD` دادید وارد شوید، گذرواژه را تغییر دهید، سپس شیپ‌فایل `pol_final` را فشرده و از تب «آپلود شیپ‌فایل» درون‌ریزی کنید.
+مطابق [docs/DEPLOY.md](DEPLOY.md#10-نخستین-ورود-و-درونریزی-شیپفایل-ویسیان) با کاربر `admin` و گذرواژه‌ای که در `FIRST_ADMIN_PASSWORD` دادید وارد شوید، گذرواژه را تغییر دهید، سپس شیپ‌فایل `veysian_final` را فشرده (یا فایل `veysian_final.zip`) و از تب «آپلود شیپ‌فایل» درون‌ریزی کنید.
 
 ---
 
@@ -170,15 +170,15 @@ sudo ufw status
 ### پشتیبان دستی
 
 ```bash
-docker compose exec -T db pg_dump -U pol_user -Fc poldokhtar_gis > backup_$(date +%Y%m%d_%H%M%S).dump
+docker compose exec -T db pg_dump -U veysian_user -Fc veysian_gis > backup_$(date +%Y%m%d_%H%M%S).dump
 ```
 
-(اگر `DB_USER`/`DB_NAME` را در `.env` عوض کرده‌اید، همان مقادیر را جای `pol_user`/`poldokhtar_gis` بگذارید.)
+(اگر `DB_USER`/`DB_NAME` را در `.env` عوض کرده‌اید، همان مقادیر را جای `veysian_user`/`veysian_gis` بگذارید.)
 
 ### بازیابی
 
 ```bash
-cat backup_20260101_020000.dump | docker compose exec -T db pg_restore -U pol_user -d poldokhtar_gis --clean --if-exists --no-owner
+cat backup_20260101_020000.dump | docker compose exec -T db pg_restore -U veysian_user -d veysian_gis --clean --if-exists --no-owner
 ```
 
 ### پشتیبان خودکار روزانه (crontab)
@@ -190,17 +190,17 @@ crontab -e
 یک سطر مانند زیر اضافه کنید (ساعت ۲ بامداد، نگه‌داری ۳۰ روز):
 
 ```cron
-0 2 * * * cd /opt/poldokhtar-gis && docker compose exec -T db pg_dump -U pol_user -Fc poldokhtar_gis > /opt/backups/poldokhtar_$(date +\%Y\%m\%d).dump && find /opt/backups -name 'poldokhtar_*.dump' -mtime +30 -delete
+0 2 * * * cd /opt/veysian-gis && docker compose exec -T db pg_dump -U veysian_user -Fc veysian_gis > /opt/backups/veysian_$(date +\%Y\%m\%d).dump && find /opt/backups -name 'veysian_*.dump' -mtime +30 -delete
 ```
 
-> پوشه آپلودها (`uploads` volume) را هم به‌صورت دوره‌ای پشتیبان بگیرید: `docker run --rm -v poldokhtar-gis_uploads:/data -v $PWD:/backup alpine tar czf /backup/uploads.tgz -C /data .` (نام دقیق volume را با `docker volume ls` بررسی کنید).
+> پوشه آپلودها (`uploads` volume) را هم به‌صورت دوره‌ای پشتیبان بگیرید: `docker run --rm -v veysian-gis_uploads:/data -v $PWD:/backup alpine tar czf /backup/uploads.tgz -C /data .` (نام دقیق volume را با `docker volume ls` بررسی کنید).
 
 ---
 
 ## 8. به‌روزرسانی نسخه
 
 ```bash
-cd /opt/poldokhtar-gis
+cd /opt/veysian-gis
 git pull            # یا کپی فایل‌های جدید روی همین مسیر (بدون دست‌زدن به .env)
 docker compose build
 docker compose up -d
@@ -264,7 +264,7 @@ curl -s http://localhost:8005/api/health | python3 -m json.tool
 # (بخش ۱)
 
 # ---------- راه‌اندازی ----------
-cd /opt/poldokhtar-gis
+cd /opt/veysian-gis
 cp .env.docker.example .env && nano .env
 docker compose build
 docker compose up -d
@@ -277,8 +277,8 @@ docker compose down
 docker compose up -d
 
 # ---------- پشتیبان‌گیری / بازیابی ----------
-docker compose exec -T db pg_dump -U pol_user -Fc poldokhtar_gis > backup.dump
-cat backup.dump | docker compose exec -T db pg_restore -U pol_user -d poldokhtar_gis --clean --if-exists --no-owner
+docker compose exec -T db pg_dump -U veysian_user -Fc veysian_gis > backup.dump
+cat backup.dump | docker compose exec -T db pg_restore -U veysian_user -d veysian_gis --clean --if-exists --no-owner
 
 # ---------- کاربران ----------
 docker compose exec backend python -m app.manage list-users

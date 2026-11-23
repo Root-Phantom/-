@@ -1,10 +1,10 @@
-﻿<#
+<#
 .SYNOPSIS
     Stops and removes the Windows service (data and files are kept).
 #>
 [CmdletBinding()]
 param(
-    [string] $ServiceName = "PoldokhtarGIS",
+    [string] $ServiceName = "VeysianGIS",
     [string] $NssmPath = ""
 )
 

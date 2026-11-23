@@ -1,4 +1,4 @@
-"""نقطه ورود برنامه — سامانه مدیریت معابر شهر پلدختر."""
+"""نقطه ورود برنامه — سامانه مدیریت معابر شهر ویسیان."""
 import logging
 import time
 from contextlib import asynccontextmanager
@@ -17,7 +17,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
-log = logging.getLogger("pol")
+log = logging.getLogger("veysian")
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
@@ -30,7 +30,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(
     lifespan=lifespan,
     title=settings.APP_NAME,
-    description="سامانه ثبت، نام‌گذاری و مدیریت معابر و خیابان‌های شهر پلدختر",
+    description="سامانه ثبت، نام‌گذاری و مدیریت معابر و خیابان‌های شهر ویسیان",
     version="1.0.0",
     docs_url="/api/docs",
     redoc_url=None,
@@ -77,10 +77,10 @@ def info():
     return {
         "app_name": settings.APP_NAME,
         "version": "1.0.0",
-        "city": "پلدختر",
-        # مرکز نقشه و بزرگ‌نمایی پیش‌فرض روی شهر پلدختر
-        "default_center": [33.1430, 47.7172],
-        "default_zoom": 14,
+        "city": "ویسیان",
+        # مرکز نقشه و بزرگ‌نمایی پیش‌فرض روی شهر ویسیان
+        "default_center": [33.4863, 48.0312],
+        "default_zoom": 15,
     }
 
 

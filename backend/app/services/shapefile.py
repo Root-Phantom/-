@@ -170,11 +170,13 @@ def detect_srid(shp: Path) -> Optional[int]:
         crs = CRS.from_wkt(wkt)
         epsg = crs.to_epsg()
         if epsg:
+            if epsg == 9707 or (crs.is_compound and "wgs 84" in (crs.name or "").lower()):
+                return 4326
             return int(epsg)
         # تشخیص دستی موارد رایج ایران
         name = (crs.name or "").lower()
         if "wgs_1984" in name or "wgs 84" in name:
-            if crs.is_geographic:
+            if crs.is_geographic or crs.is_compound:
                 return 4326
         return None
     except Exception:

@@ -9,7 +9,7 @@ from .db import Base, SessionLocal, engine, ensure_extensions
 from .models import Role, User
 from .security import hash_password
 
-log = logging.getLogger("pol.seed")
+log = logging.getLogger("veysian.seed")
 
 
 def init_db() -> None:

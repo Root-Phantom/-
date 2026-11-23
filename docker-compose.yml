@@ -1,12 +1,14 @@
+name: veysian-gis
+
 services:
   db:
     image: postgis/postgis:16-3.4-alpine
-    container_name: poldokhtar_db
+    container_name: veysian_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${DB_USER:-pol_user}
+      POSTGRES_USER: ${DB_USER:-veysian_user}
       POSTGRES_PASSWORD: ${DB_PASSWORD:?مقدار DB_PASSWORD را در فایل .env تعیین کنید}
-      POSTGRES_DB: ${DB_NAME:-poldokhtar_gis}
+      POSTGRES_DB: ${DB_NAME:-veysian_gis}
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -23,7 +25,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: poldokhtar_backend
+    container_name: veysian_backend
     restart: unless-stopped
     depends_on:
       db:
@@ -31,7 +33,7 @@ services:
     environment:
       APP_ENV: production
       DEBUG: "false"
-      DATABASE_URL: postgresql+psycopg://${DB_USER:-pol_user}:${DB_PASSWORD}@db:5432/${DB_NAME:-poldokhtar_gis}
+      DATABASE_URL: postgresql+psycopg://${DB_USER:-veysian_user}:${DB_PASSWORD}@db:5432/${DB_NAME:-veysian_gis}
       SECRET_KEY: ${SECRET_KEY:?مقدار SECRET_KEY را در فایل .env تعیین کنید}
       ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-720}
       COOKIE_SECURE: ${COOKIE_SECURE:-false}

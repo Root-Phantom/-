@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Backs up the database (pg_dump, custom format) and deletes old backups.
 
@@ -7,11 +7,11 @@
 
 .EXAMPLE
     .\backup.ps1
-    .\backup.ps1 -BackupDir D:\Backups\PoldokhtarGIS -RetentionDays 60
+    .\backup.ps1 -BackupDir D:\Backups\VeysianGIS -RetentionDays 60
 #>
 [CmdletBinding()]
 param(
-    [string] $BackupDir = "C:\Backups\PoldokhtarGIS",
+    [string] $BackupDir = "C:\Backups\VeysianGIS",
     [int]    $RetentionDays = 30,
     [string] $PgBin = ""
 )

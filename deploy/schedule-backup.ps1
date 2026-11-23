@@ -1,16 +1,16 @@
-﻿<#
+<#
 .SYNOPSIS
     Registers a daily scheduled task that runs backup.ps1.
 
 .EXAMPLE
-    .\schedule-backup.ps1 -At "02:00" -BackupDir D:\Backups\PoldokhtarGIS
+    .\schedule-backup.ps1 -At "02:00" -BackupDir D:\Backups\VeysianGIS
 #>
 [CmdletBinding()]
 param(
     [string] $At = "02:00",
-    [string] $BackupDir = "C:\Backups\PoldokhtarGIS",
+    [string] $BackupDir = "C:\Backups\VeysianGIS",
     [int]    $RetentionDays = 30,
-    [string] $TaskName = "PoldokhtarGIS-DailyBackup"
+    [string] $TaskName = "VeysianGIS-DailyBackup"
 )
 
 $ErrorActionPreference = "Stop"

@@ -1,15 +1,15 @@
-﻿<#
+<#
 .SYNOPSIS
     Restores the database from a backup made by backup.ps1.
     WARNING: current data is replaced by the backup contents.
 
 .EXAMPLE
-    .\restore.ps1 -BackupFile C:\Backups\PoldokhtarGIS\poldokhtar_gis_20250920_020000.dump
+    .\restore.ps1 -BackupFile C:\Backups\VeysianGIS\veysian_gis_20260920_020000.dump
 #>
 [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = "High")]
 param(
     [Parameter(Mandatory = $true)] [string] $BackupFile,
-    [string] $ServiceName = "PoldokhtarGIS",
+    [string] $ServiceName = "VeysianGIS",
     [string] $PgBin = ""
 )
 

@@ -14,17 +14,17 @@ class Settings(BaseSettings):
     )
 
     # --- عمومی ---
-    APP_NAME: str = "سامانه مدیریت معابر شهر پلدختر"
+    APP_NAME: str = "سامانه مدیریت معابر شهر ویسیان"
     APP_ENV: str = "production"
     DEBUG: bool = False
 
     # --- پایگاه داده ---
-    DATABASE_URL: str = "postgresql+psycopg://postgres:postgres@localhost:5432/poldokhtar_gis"
+    DATABASE_URL: str = "postgresql+psycopg://postgres:postgres@localhost:5432/veysian_gis"
 
     # --- امنیت ---
     SECRET_KEY: str = "CHANGE-ME-IN-PRODUCTION"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 12
-    COOKIE_NAME: str = "pol_session"
+    COOKIE_NAME: str = "veysian_session"
     COOKIE_SECURE: bool = False
     COOKIE_SAMESITE: str = "lax"
     # فقط وقتی سامانه پشت IIS/پروکسی معکوس است true شود؛ در غیر این صورت هدر X-Forwarded-For قابل جعل است

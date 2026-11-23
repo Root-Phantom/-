@@ -1,6 +1,6 @@
-# سامانه مدیریت معابر شهر پلدختر
+# سامانه مدیریت معابر شهر ویسیان
 
-سامانه تحت وب برای ثبت، نام‌گذاری و مدیریت معابر و خیابان‌های شهر پلدختر با جدول توصیفی پویا (مشابه ArcGIS).
+سامانه تحت وب برای ثبت، نام‌گذاری و مدیریت معابر و خیابان‌های شهر ویسیان با جدول توصیفی پویا (مشابه ArcGIS).
 
 ## امکانات
 
@@ -33,7 +33,7 @@
 خلاصه:
 
 ```powershell
-cd C:\PoldokhtarGIS\deploy
+cd C:\VeysianGIS\deploy
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 .\install.ps1 -PostgresPassword "..." -DbPassword "..." -AdminPassword "..."
 .\install-service.ps1 -Port 8005
@@ -56,12 +56,12 @@ curl http://localhost:8005/api/health
 
 ```bash
 # پایگاه داده آزمایشی
-docker run -d --name pol_pg -e POSTGRES_PASSWORD=devpass -e POSTGRES_DB=poldokhtar_gis -p 55432:5432 postgis/postgis:16-3.4
+docker run -d --name veysian_pg -e POSTGRES_PASSWORD=devpass -e POSTGRES_DB=veysian_gis -p 55432:5432 postgis/postgis:16-3.4
 
 # بک‌اند
 cd backend
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-cp .env.example .env    # DATABASE_URL=postgresql+psycopg://postgres:devpass@localhost:55432/poldokhtar_gis
+cp .env.example .env    # DATABASE_URL=postgresql+psycopg://postgres:devpass@localhost:55432/veysian_gis
 .venv/bin/uvicorn app.main:app --reload --port 8005
 
 # رابط کاربری (پراکسی /api به پورت 8005)
@@ -89,5 +89,5 @@ docs/DEPLOY_DOCKER.md  راهنمای استقرار با Docker روی اوبو
 Dockerfile             ساخت ایمیج بک‌اند + رابط کاربری
 docker-compose.yml     سرویس‌های backend و db (هرکدام با پورت جداگانه)
 .env.docker.example    نمونه تنظیمات Docker Compose
-pol_final/             شیپ‌فایل معابر پلدختر (۴۴۸ معبر)
+veysian_final/          شیپ‌فایل معابر ویسیان (۱۰۳ معبر)
 ```

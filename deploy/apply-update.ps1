@@ -5,8 +5,8 @@
 .DESCRIPTION
     Run this script FROM THE EXTRACTED PACKAGE, not from the install folder:
 
-        Expand-Archive C:\Temp\PoldokhtarGIS-update.zip C:\Temp\pol-update -Force
-        C:\Temp\pol-update\deploy\apply-update.ps1
+        Expand-Archive C:\Temp\VeysianGIS-update.zip C:\Temp\veysian-update -Force
+        C:\Temp\veysian-update\deploy\apply-update.ps1
 
     What it does:
       1. Copies the new files into -InstallDir. These are never touched:
@@ -16,13 +16,13 @@
          create new tables, start service.
 
 .EXAMPLE
-    C:\Temp\pol-update\deploy\apply-update.ps1
-    C:\Temp\pol-update\deploy\apply-update.ps1 -InstallDir D:\PoldokhtarGIS -SkipBackup
+    C:\Temp\veysian-update\deploy\apply-update.ps1
+    C:\Temp\veysian-update\deploy\apply-update.ps1 -InstallDir D:\VeysianGIS -SkipBackup
 #>
 [CmdletBinding()]
 param(
-    [string] $InstallDir = "C:\PoldokhtarGIS",
-    [string] $ServiceName = "PoldokhtarGIS",
+    [string] $InstallDir = "C:\VeysianGIS",
+    [string] $ServiceName = "VeysianGIS",
     [string] $WheelsDir = "",
     [switch] $SkipBackup
 )
