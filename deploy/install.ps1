@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Installs the Veysian Street Management System (backend + database + frontend) on Windows Server.
 

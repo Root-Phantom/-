@@ -154,8 +154,12 @@ export default function MapView(props: MapViewProps) {
         maxZoom: 20, attribution: "© OpenStreetMap",
       }),
       satellite: L.tileLayer(
-        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        { maxZoom: 19, attribution: "© Esri" },
+        "https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+        {
+          maxZoom: 20,
+          subdomains: ["mt0", "mt1", "mt2", "mt3"],
+          attribution: "© Google",
+        },
       ),
       blank: L.tileLayer("", { attribution: "بدون نقشه پایه" }),
     };
